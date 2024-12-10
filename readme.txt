@@ -13,7 +13,9 @@ sudo dnf install python3 python3-pip -y
 sudo yum install mod_ssl
 ----------------------------------------------
 pip3 install flask pymysql
-pip3 install flask_sqlalchemy flask_login requests requests-oauthlib
+pip3 install flask_sqlalchemy flask_login requests requests-oauthlib flask-migrate flask-sqlalchemy
+pip install bcrypt
+
 
 -----------------------------
 sudo mkdir -p /var/www/wlcomco
@@ -80,3 +82,13 @@ EXIT;
 --------------------------------------------------
 sudo systemctl restart httpd
 --------------------------------------------------
+
+
+
+---------------------
+for update DATABASE
+---------------------
+flask --app app:create_app db init
+flask db migrate -m "Description"
+flask db upgrade
+

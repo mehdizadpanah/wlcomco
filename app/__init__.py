@@ -1,23 +1,18 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-
-db = SQLAlchemy()
-login_manager = LoginManager()
+from .extensions import db, migrate, login_manager
+from .routes import routes
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object('config.Config')
+    app.config.from_object('config.Config')  # تنظیمات از فایل config
 
+    # مقداردهی اولیه اکستنشن‌ها
     db.init_app(app)
+    migrate.init_app(app, db)  # راه‌اندازی Flask-Migrate
     login_manager.init_app(app)
-    login_manager.login_view = 'login'
+    login_manager.login_view = 'routes.login'  # تنظیم مسیر لاگین پیش‌فرض
 
-    from .routes import routes  # ایمپورت Blueprint از routes.py
-    app.register_blueprint(routes)  # ثبت Blueprint در اپلیکیشن
-
-    with app.app_context():
-        from . import routes, models
-        db.create_all()
+    # ثبت Blueprint
+    app.register_blueprint(routes)
 
     return app
