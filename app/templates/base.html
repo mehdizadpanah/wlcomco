@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
@@ -32,7 +33,8 @@
 
         /* هدر و محتوای اصلی */
         .container-fluid {
-            margin-left: 270px; /* فاصله از منوی سمت چپ */
+            margin-left: 270px;
+            /* فاصله از منوی سمت چپ */
             transition: all 0.3s;
         }
 
@@ -51,6 +53,7 @@
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <title>{% block title %}Default Title{% endblock %}</title>
 </head>
+
 <body>
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -58,7 +61,8 @@
         <div class="collapse navbar-collapse justify-content-end">
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 14px;">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 14px;">
                         {{ current_user.name }}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
@@ -76,6 +80,15 @@
                 <a href="/dashboard" class="list-group-item list-group-item-action bg-light">Dashboard</a>
                 <a href="/profile" class="list-group-item list-group-item-action bg-light">Profile</a>
                 <a href="/settings" class="list-group-item list-group-item-action bg-light">Settings</a>
+                <!-- General Settings with Collapsible Submenu -->
+                <a href="#" class="list-group-item list-group-item-action bg-light" data-bs-toggle="collapse"
+                    data-bs-target="#generalSettingsMenu" aria-expanded="false">
+                    General Settings
+                </a>
+                <div class="collapse list-group-item bg-light" id="generalSettingsMenu">
+                    <a href="/users" class="list-group-item list-group-item-action bg-light">Users</a>
+                    <a href="/restaurants" class="list-group-item list-group-item-action bg-light">Restaurants</a>
+                </div>
             </div>
         </div>
         <div class="container-fluid">
@@ -85,4 +98,5 @@
         </div>
     </div>
 </body>
+
 </html>
