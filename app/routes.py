@@ -19,7 +19,8 @@ redirect_uri = 'https://wlcomco.comco.ir/login/google/callback'
 @routes.route('/')
 def index():
     if current_user.is_authenticated:  # بررسی لاگین بودن کاربر
-        return redirect(url_for('routes.dashboard'))  # هدایت به داشبورد
+        return render_template('dashboard.html', name=current_user.name)
+  # هدایت به داشبورد
     return redirect(url_for('routes.login'))  # هدایت به لاگین
 
 
