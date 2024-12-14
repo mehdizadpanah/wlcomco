@@ -12,7 +12,7 @@
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 
-<body class="bg-white">
+<body class="bg-light">
     <div id="layoutAuthentication">
         <div id="layoutAuthentication_content">
             <main>
@@ -59,7 +59,7 @@
                                     </form>
                                 </div>
                                 <div class="card-footer text-center py-3">
-                                    <div class="small mb-3"><a href="register.html">Need an account? Sign up!</a></div>
+                                    <div class="small mb-3"><a href="{{ url_for('routes.signup') }}">Need an account? Sign up!</a></div>
                                     {% if error %}
                                     <div class="text-center alert alert-danger" role="alert">
                                         {{ error }}

@@ -1,9 +1,14 @@
-from flask import Blueprint, render_template, redirect, url_for, session, request
+from flask import Blueprint, render_template, redirect, url_for, session, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from requests_oauthlib import OAuth2Session
 from .extensions import db
 from .extensions import login_manager  # ایمپورت login_manager
 from .models import User
+from .logging_config import get_logger
+
+
+# تعریف logger
+logger = get_logger(__name__)
 
 # تعریف Blueprint
 routes = Blueprint('routes', __name__)
@@ -69,7 +74,8 @@ def signup():
         # بررسی اینکه آیا ایمیل قبلاً ثبت شده است
         user = User.query.filter_by(email=email).first()
         if user:
-            return render_template('signup.html', error="Email already registered.")
+            logger.info('Email already registered')
+            return jsonify({"error": "Email already registered."}), 400
 
         # ایجاد کاربر جدید
         new_user = User(
