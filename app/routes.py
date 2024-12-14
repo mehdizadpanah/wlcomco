@@ -74,7 +74,6 @@ def signup():
         # بررسی اینکه آیا ایمیل قبلاً ثبت شده است
         user = User.query.filter_by(email=email).first()
         if user:
-            logger.info('Email already registered')
             return jsonify({"error": "Email already registered."}), 400
 
         # ایجاد کاربر جدید
@@ -94,6 +93,38 @@ def signup():
     # برای لود اولیه فرم، پیام خطا ارسال نمی‌شود
     return render_template('signup.html', error=None)
 
+
+@routes.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        # بروزرسانی پروفایل کاربر
+        name = request.form.get('name')
+
+        # به‌روزرسانی نام کاربر
+        current_user.name = name
+        db.session.commit()
+
+        return redirect(url_for('routes.dashboard'))
+    
+    # اطلاعات کاربر فعلی را به قالب ارسال می‌کنیم
+    return render_template('profile.html', user=current_user)
+
+
+@routes.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    if request.method == 'POST':
+        # بروزرسانی پروفایل کاربر
+        password = request.form.get('password')
+        current_user.set_password(password)
+
+        db.session.commit()
+
+        return redirect(url_for('routes.dashboard'))
+    
+    # اطلاعات کاربر فعلی را به قالب ارسال می‌کنیم
+    return render_template('change_password.html', name=current_user.name)
 
 
 @routes.route('/login/google')

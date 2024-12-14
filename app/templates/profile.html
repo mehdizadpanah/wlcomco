@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Sign Up</title>
+    <title>Profile</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='custom/css/styles.css') }}">
 
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -22,31 +22,27 @@
                         <div class="col-lg-7">
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
                                 <div class="card-header">
-                                    <h3 class="text-center font-weight-light my-4">Create Account</h3>
+                                    <h3 class="text-center font-weight-light my-4">Profile</h3>
                                 </div>
                                 <div class="card-body">
-                                    <form id="signup-form" method="POST" action="{{ url_for('routes.signup') }}">
+                                    <form id="profile-form" method="POST" action="{{ url_for('routes.profile') }}">
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
                                                     <input class="form-control" id="name" name="name" type="text"
-                                                        placeholder="Enter your full name" required minlength="3" />
+                                                        placeholder="Enter your full name" required minlength="3"
+                                                        value="{{user.name}}" />
                                                     <label for="name">Full name</label>
                                                 </div>
                                             </div>
-                                            <!-- <div class="col-md-6">
-                                                    <div class="form-floating">
-                                                        <input class="form-control" id="inputLastName" type="text" placeholder="Enter your last name" />
-                                                        <label for="inputLastName">Last name</label>
-                                                    </div>
-                                                </div> -->
                                         </div>
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="email" type="email" name="email"
-                                                placeholder="name@example.com" required />
+                                                placeholder="name@example.com" required value="{{user.email}}"
+                                                disabled />
                                             <label for="email">Email address</label>
                                         </div>
-                                        <div class="row mb-3">
+                                        <!-- <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
                                                     <input class="form-control" id="password" type="password"
@@ -63,22 +59,20 @@
                                                     <label for="confirm_password">Confirm Password</label>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="mt-4 mb-0">
                                             <div class="row">
                                                 <div class="col-md-6"><button type="submit"
-                                                    class="btn btn-primary w-100">Create Account</button>
+                                                        class="btn btn-primary w-100">Save</button>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <a href="{{ url_for('routes.dashboard') }}"
                                                         class="btn btn-secondary w-100">Cancel</a>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </form>
-                                </div>
-                                <div class="card-footer text-center py-3">
-                                    <div class="small"><a href="{{ url_for('routes.login') }}">Have an account? Go to login</a></div>
                                 </div>
                             </div>
                         </div>
@@ -104,58 +98,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='custom/js/scripts.js') }}">
 
-    <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("signup-form");
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const confirmPassword = document.getElementById("confirm_password");
-
-    function validatePassword() {
-        if (password.value !== confirmPassword.value) {
-            confirmPassword.setCustomValidity("Passwords do not match.");
-        } else {
-            confirmPassword.setCustomValidity("");
-        }
-    }
-
-    password.addEventListener("input", validatePassword);
-    confirmPassword.addEventListener("input", validatePassword);
-
-    form.addEventListener("submit", async function (event) {
-        event.preventDefault(); // جلوگیری از ارسال پیش‌فرض فرم
-
-        // داده‌های فرم
-        const formData = new FormData(form);
-
-        try {
-            const response = await fetch("{{ url_for('routes.signup') }}", {
-                method: "POST",
-                body: formData,
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                if (errorData.error) {
-                    // نمایش خطا در فیلد ایمیل
-                    email.setCustomValidity(errorData.error);
-                    email.reportValidity(); // نمایش پیام
-                }
-            } else {
-                // موفقیت‌آمیز
-                // alert("Signup successful!");
-                window.location.href = "{{ url_for('routes.dashboard') }}"; // هدایت به داشبورد
-            }
-        } catch (error) {
-            console.error("An error occurred:", error);
-        }
-    });
-
-    email.addEventListener("input", function () {
-        email.setCustomValidity("");
-    });
-});
-    </script>
 </body>
 
 </html>
