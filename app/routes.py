@@ -1,3 +1,5 @@
+import os
+
 from flask import Blueprint, render_template, redirect, url_for, session, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from requests_oauthlib import OAuth2Session
@@ -6,7 +8,6 @@ from .extensions import login_manager  # ایمپورت login_manager
 from .models import User
 from .logging_config import get_logger
 
-
 # تعریف logger
 logger = get_logger(__name__)
 
@@ -14,11 +15,11 @@ logger = get_logger(__name__)
 routes = Blueprint('routes', __name__)
 
 # تنظیمات OAuth برای گوگل
-client_id = '640215854838-3nc3pdvsdg5c894jcofljaonj2fomm5g.apps.googleusercontent.com'
-client_secret = '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'
+client_id = os.getenv('OAUTH_CLIENT_ID')
+client_secret = os.getenv('OAUTH_CLIENT_SECRET')
 authorization_base_url = 'https://accounts.google.com/o/oauth2/auth'
 token_url = 'https://accounts.google.com/o/oauth2/token'
-redirect_uri = 'https://wlcomco.comco.ir/login/google/callback'
+redirect_uri = os.getenv('OAUTH_REDIRECT_URI')
 
 
 @routes.route('/')

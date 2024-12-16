@@ -14,7 +14,8 @@ sudo yum install mod_ssl
 ----------------------------------------------
 pip3 install flask pymysql
 pip3 install flask_sqlalchemy flask_login requests requests-oauthlib flask-migrate flask-sqlalchemy
-pip install bcrypt
+pip install bcrypt Flask-WTF python-dotenv
+
 
 
 -----------------------------
