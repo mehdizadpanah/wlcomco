@@ -1,6 +1,6 @@
 from flask import Flask
 from .extensions import db, migrate, login_manager
-from .routes import routes
+from .routes import Blueprints
 from .models import User  
 
 
@@ -12,10 +12,11 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)  # راه‌اندازی Flask-Migrate
     login_manager.init_app(app)
-    login_manager.login_view = 'routes.login'  # تنظیم مسیر لاگین پیش‌فرض
+    login_manager.login_view = 'auth.login'  # تنظیم مسیر لاگین پیش‌فرض
 
     # ثبت Blueprint
-    app.register_blueprint(routes)
+    for bluprint in Blueprints:
+        app.register_blueprint(bluprint)
 
     with app.app_context():
         create_default_user()

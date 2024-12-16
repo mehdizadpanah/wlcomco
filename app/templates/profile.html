@@ -25,7 +25,7 @@
                                     <h3 class="text-center font-weight-light my-4">Profile</h3>
                                 </div>
                                 <div class="card-body">
-                                    <form id="profile-form" method="POST" action="{{ url_for('routes.profile') }}">
+                                    <form id="profile-form" method="POST" action="{{ url_for('auth.profile') }}">
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
@@ -66,7 +66,7 @@
                                                         class="btn btn-primary w-100">Save</button>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <a href="{{ url_for('routes.dashboard') }}"
+                                                    <a href="{{ url_for('auth.dashboard') }}"
                                                         class="btn btn-secondary w-100">Cancel</a>
                                                 </div>
                                             </div>

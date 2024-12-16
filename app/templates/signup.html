@@ -25,7 +25,7 @@
                                     <h3 class="text-center font-weight-light my-4">Create Account</h3>
                                 </div>
                                 <div class="card-body">
-                                    <form id="signup-form" method="POST" action="{{ url_for('routes.signup') }}">
+                                    <form id="signup-form" method="POST" action="{{ url_for('auth.signup') }}">
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
@@ -70,7 +70,7 @@
                                                     class="btn btn-primary w-100">Create Account</button>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <a href="{{ url_for('routes.dashboard') }}"
+                                                    <a href="{{ url_for('auth.dashboard') }}"
                                                         class="btn btn-secondary w-100">Cancel</a>
                                                 </div>
                                             </div>
@@ -78,7 +78,7 @@
                                     </form>
                                 </div>
                                 <div class="card-footer text-center py-3">
-                                    <div class="small"><a href="{{ url_for('routes.login') }}">Have an account? Go to login</a></div>
+                                    <div class="small"><a href="{{ url_for('auth.login') }}">Have an account? Go to login</a></div>
                                 </div>
                             </div>
                         </div>
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new FormData(form);
 
         try {
-            const response = await fetch("{{ url_for('routes.signup') }}", {
+            const response = await fetch("{{ url_for('auth.signup') }}", {
                 method: "POST",
                 body: formData,
             });
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 // موفقیت‌آمیز
                 // alert("Signup successful!");
-                window.location.href = "{{ url_for('routes.dashboard') }}"; // هدایت به داشبورد
+                window.location.href = "{{ url_for('auth.dashboard') }}"; // هدایت به داشبورد
             }
         } catch (error) {
             console.error("An error occurred:", error);
