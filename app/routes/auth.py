@@ -47,11 +47,11 @@ def login():
                 if user.check_password(password):  # بررسی رمز عبور
                     login_user(user)
                     return redirect(url_for('auth.dashboard'))
-                return render_template('login.html', error="Invalid password")
-            return render_template('login.html', error="Please login using Google")
-        return render_template('login.html', error="User not found")
+                return render_template('auth/login.html', error="Invalid password")
+            return render_template('auth/login.html', error="Please login using Google")
+        return render_template('auth/login.html', error="User not found")
 
-    return render_template('login.html')
+    return render_template('auth/login.html')
 
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
@@ -64,11 +64,11 @@ def signup():
 
         # بررسی تطابق رمز عبور
         if password != confirm_password:
-            return render_template('signup.html', error="Passwords do not match.")
+            return render_template('auth/signup.html', error="Passwords do not match.")
 
         # بررسی طول رمز عبور
         if len(password) < 4:
-            return render_template('signup.html', error="Password must be at least 4 characters long.")
+            return render_template('auth/signup.html', error="Password must be at least 4 characters long.")
 
         # بررسی اینکه آیا ایمیل قبلاً ثبت شده است
         user = User.query.filter_by(email=email).first()
@@ -90,7 +90,7 @@ def signup():
         return redirect(url_for('auth.dashboard'))
 
     # برای لود اولیه فرم، پیام خطا ارسال نمی‌شود
-    return render_template('signup.html', error=None)
+    return render_template('auth/signup.html', error=None)
 
 
 @auth_bp.route('/profile', methods=['GET', 'POST'])
@@ -107,7 +107,7 @@ def profile():
         return redirect(url_for('auth.dashboard'))
     
     # اطلاعات کاربر فعلی را به قالب ارسال می‌کنیم
-    return render_template('profile.html', user=current_user)
+    return render_template('auth/profile.html', user=current_user)
 
 
 @auth_bp.route('/change_password', methods=['GET', 'POST'])
@@ -123,7 +123,7 @@ def change_password():
         return redirect(url_for('auth.dashboard'))
     
     # اطلاعات کاربر فعلی را به قالب ارسال می‌کنیم
-    return render_template('change_password.html', name=current_user.name)
+    return render_template('auth/change_password.html', name=current_user.name)
 
 
 @auth_bp.route('/login/google')
