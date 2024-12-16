@@ -1,11 +1,9 @@
 import os
-
+from .models import User,db
 from flask import Blueprint, render_template, redirect, url_for, session, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from requests_oauthlib import OAuth2Session
-from .extensions import db
 from .extensions import login_manager  # ایمپورت login_manager
-from .models import User
 from .logging_config import get_logger
 
 # تعریف logger

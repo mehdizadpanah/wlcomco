@@ -1,6 +1,6 @@
-import bcrypt  # اضافه کردن ماژول bcrypt برای هش کردن رمز عبور
+import bcrypt 
 from flask_login import UserMixin
-from .extensions import db
+from ..extensions import db
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
