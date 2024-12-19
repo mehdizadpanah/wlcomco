@@ -1,10 +1,11 @@
 import os
 from ..models import User,db
-from flask import Blueprint, render_template, redirect, url_for, session, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, session, request, jsonify,flash
 from flask_login import login_user, logout_user, login_required, current_user
 from requests_oauthlib import OAuth2Session
 from ..extensions import login_manager  # ایمپورت login_manager
 from ..logging_config import get_logger
+from app.forms.auth_forms import LoginForm,SignupForm,ProfileForm,ChangePasswordForm
 
 # تعریف logger
 logger = get_logger(__name__)
@@ -35,95 +36,105 @@ def load_user(user_id):
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+    form = LoginForm()
+    if request.method == 'POST':  
+        if form.validate_on_submit():
+            email = form.email.data
+            password = form.password.data
 
-        # جستجوی کاربر در پایگاه داده
-        user = User.query.filter_by(email=email).first()
+            # جستجوی کاربر در پایگاه داده
+            user = User.query.filter_by(email=email).first()
 
-        if user:
-            if user.auth_provider == "local":  # بررسی نوع کاربر
-                if user.check_password(password):  # بررسی رمز عبور
-                    login_user(user)
-                    return redirect(url_for('auth.dashboard'))
-                return render_template('auth/login.html', error="Invalid password")
-            return render_template('auth/login.html', error="Please login using Google")
-        return render_template('auth/login.html', error="User not found")
+            if user:
+                if user.auth_provider == "local":  # بررسی نوع کاربر
+                    if user.check_password(password):  # بررسی رمز عبور
+                        login_user(user)
+                        return redirect(url_for('auth.dashboard'))
+                    flash ('Invalid username or password','danger')
+                    return render_template('auth/login.html', form=form)
+                flash ("please login using Google",'warning')
+                return render_template('auth/login.html', form=form)
+            flash ('Invalid username or password','danger')
+            return render_template('auth/login.html', form=form)
+        flash ('Your data entry is not valid','danger')
+        return render_template('auth/login.html',form=form)
 
-    return render_template('auth/login.html')
+    return render_template('auth/login.html',form=form)
 
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
+    form=SignupForm()
     if request.method == 'POST':
-        email = request.form.get('email')
-        name = request.form.get('name')
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
-
-        # بررسی تطابق رمز عبور
-        if password != confirm_password:
-            return render_template('auth/signup.html', error="Passwords do not match.")
-
-        # بررسی طول رمز عبور
-        if len(password) < 4:
-            return render_template('auth/signup.html', error="Password must be at least 4 characters long.")
-
+        email = form.email.data
+        name  = form.name.data
+        password = form.password.data
+        confirm_password = form.confirm_password.data
+        
         # بررسی اینکه آیا ایمیل قبلاً ثبت شده است
         user = User.query.filter_by(email=email).first()
         if user:
             return jsonify({"error": "Email already registered."}), 400
 
-        # ایجاد کاربر جدید
-        new_user = User(
+        if form.validate_on_submit:
+            # ایجاد کاربر جدید
+            new_user = User(
             email=email,
             name=name,
-            auth_provider="local"  # مقداردهی auth_provider به "local"
-        )
-        new_user.set_password(password)  # هش کردن رمز عبور
-        db.session.add(new_user)
-        db.session.commit()
+            auth_provider="local")  # مقداردهی auth_provider به "local"
 
-        # ورود کاربر پس از ثبت‌نام
-        login_user(new_user)
-        return redirect(url_for('auth.dashboard'))
+            new_user.set_password(password)  # هش کردن رمز عبور
+            db.session.add(new_user)
+            db.session.commit()
 
+            # ورود کاربر پس از ثبت‌نام
+            login_user(new_user)
+            flash ('Welcome! We are glad to have you here.','success')
+            return redirect(url_for('auth.dashboard'))
+        
+        flash ('Your data is not validating','error')
+        return render_template('auth/signup.html',form=form)
+        
     # برای لود اولیه فرم، پیام خطا ارسال نمی‌شود
-    return render_template('auth/signup.html', error=None)
+    return render_template('auth/signup.html', form=form, error=None)
 
 
 @auth_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
+    form = ProfileForm()
     if request.method == 'POST':
-        # بروزرسانی پروفایل کاربر
-        name = request.form.get('name')
-
         # به‌روزرسانی نام کاربر
-        current_user.name = name
-        db.session.commit()
-
+        isChange = False
+        if current_user.name != form.name.data:
+            isChange = True
+        if isChange == True:
+            current_user.name = form.name.data
+            db.session.commit()
+            flash("Profile updated successfully!", "success")
         return redirect(url_for('auth.dashboard'))
     
-    # اطلاعات کاربر فعلی را به قالب ارسال می‌کنیم
-    return render_template('auth/profile.html', user=current_user)
+    if request.method == 'GET':
+        # اطلاعات کاربر فعلی را به قالب ارسال می‌کنیم
+        form.name.data = current_user.name
+        form.email.data = current_user.email
+    return render_template('auth/profile.html', form=form)
 
 
 @auth_bp.route('/change_password', methods=['GET', 'POST'])
 @login_required
 def change_password():
+    form = ChangePasswordForm()
     if request.method == 'POST':
         # بروزرسانی پروفایل کاربر
-        password = request.form.get('password')
-        current_user.set_password(password)
+        current_user.set_password(form.password.data)
 
         db.session.commit()
-
+        flash ('Password changed successfully.','success')
         return redirect(url_for('auth.dashboard'))
     
     # اطلاعات کاربر فعلی را به قالب ارسال می‌کنیم
-    return render_template('auth/change_password.html', name=current_user.name)
+    return render_template('auth/change_password.html', form=form)
 
 
 @auth_bp.route('/login/google')

@@ -26,21 +26,18 @@
                                 </div>
                                 <div class="card-body">
                                     <form id="profile-form" method="POST" action="{{ url_for('auth.profile') }}">
+                                        {{ form.hidden_tag() }} <!-- برای CSRF -->
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    <input class="form-control" id="name" name="name" type="text"
-                                                        placeholder="Enter your full name" required minlength="3"
-                                                        value="{{user.name}}" />
-                                                    <label for="name">Full name</label>
+                                                    {{form.name(class="form-control",placeholder="your name")}}
+                                                    {{form.name.label}}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="email" type="email" name="email"
-                                                placeholder="name@example.com" required value="{{user.email}}"
-                                                disabled />
-                                            <label for="email">Email address</label>
+                                            {{form.email(class="form-control",placeholder="Enter email")}}
+                                            {{form.email.label}}
                                         </div>
                                         <!-- <div class="row mb-3">
                                             <div class="col-md-6">

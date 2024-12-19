@@ -14,6 +14,7 @@
 </head>
 
 <body class="bg-light">
+    {% include "includes/_flash_messages.html" %}
     <div id="layoutAuthentication">
         <div id="layoutAuthentication_content">
             <main>
@@ -26,48 +27,40 @@
                                 </div>
                                 <div class="card-body">
                                     <form id="signup-form" method="POST" action="{{ url_for('auth.signup') }}">
+                                        {{ form.hidden_tag() }} <!-- برای CSRF -->
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    <input class="form-control" id="name" name="name" type="text"
+                                                    {{form.name(class="form-control" ,placeholder="Enter yout full name")}}
+                                                    {{form.name.label}}
+                                                    <!-- <input class="form-control" id="name" name="name" type="text"
                                                         placeholder="Enter your full name" required minlength="3" />
-                                                    <label for="name">Full name</label>
+                                                    <label for="name">Full name</label> -->
                                                 </div>
                                             </div>
-                                            <!-- <div class="col-md-6">
-                                                    <div class="form-floating">
-                                                        <input class="form-control" id="inputLastName" type="text" placeholder="Enter your last name" />
-                                                        <label for="inputLastName">Last name</label>
-                                                    </div>
-                                                </div> -->
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="email" type="email" name="email"
-                                                placeholder="name@example.com" required />
-                                            <label for="email">Email address</label>
+                                            {{form.email(class="form-control" ,placeholder="name@example.com",type="email")}}
+                                            {{form.email.label}}
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    <input class="form-control" id="password" type="password"
-                                                        name="password" placeholder="Create a password" required
-                                                        minlength="6" />
-                                                    <label for="password">Password</label>
+                                                    {{form.password(class="form-control", placeholder="Create password",id="password")}}
+                                                    {{form.password.label}}
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    <input class="form-control" id="confirm_password" type="password"
-                                                        name="confirm_password" placeholder="Confirm password" required
-                                                        minlength="6" />
-                                                    <label for="confirm_password">Confirm Password</label>
+                                                    {{form.confirm_password(class="form-control", placeholder="confirm_password",id="confirm_passwordA")}}
+                                                    {{form.confirm_password.label}}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="mt-4 mb-0">
                                             <div class="row">
                                                 <div class="col-md-6"><button type="submit"
-                                                    class="btn btn-primary w-100">Create Account</button>
+                                                        class="btn btn-primary w-100">Create Account</button>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <a href="{{ url_for('auth.dashboard') }}"
@@ -78,7 +71,8 @@
                                     </form>
                                 </div>
                                 <div class="card-footer text-center py-3">
-                                    <div class="small"><a href="{{ url_for('auth.login') }}">Have an account? Go to login</a></div>
+                                    <div class="small"><a href="{{ url_for('auth.login') }}">Have an account? Go to
+                                            login</a></div>
                                 </div>
                             </div>
                         </div>
@@ -105,56 +99,56 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='custom/js/scripts.js') }}">
 
     <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("signup-form");
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const confirmPassword = document.getElementById("confirm_password");
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("signup-form");
+            const email = document.getElementById("email");
+            const password = document.getElementById("password");
+            const confirmPassword = document.getElementById("confirm_password");
 
-    function validatePassword() {
-        if (password.value !== confirmPassword.value) {
-            confirmPassword.setCustomValidity("Passwords do not match.");
-        } else {
-            confirmPassword.setCustomValidity("");
-        }
-    }
+            function validatePassword() {
+                if (password.value !== confirmPassword.value) {
+                    confirmPassword.setCustomValidity("Passwords do not match.");
+                } else {
+                    confirmPassword.setCustomValidity("");
+                }
+            }
 
-    password.addEventListener("input", validatePassword);
-    confirmPassword.addEventListener("input", validatePassword);
+            password.addEventListener("input", validatePassword);
+            confirmPassword.addEventListener("input", validatePassword);
 
-    form.addEventListener("submit", async function (event) {
-        event.preventDefault(); // جلوگیری از ارسال پیش‌فرض فرم
+            form.addEventListener("submit", async function (event) {
+                event.preventDefault(); // جلوگیری از ارسال پیش‌فرض فرم
 
-        // داده‌های فرم
-        const formData = new FormData(form);
+                // داده‌های فرم
+                const formData = new FormData(form);
 
-        try {
-            const response = await fetch("{{ url_for('auth.signup') }}", {
-                method: "POST",
-                body: formData,
+                try {
+                    const response = await fetch("{{ url_for('auth.signup') }}", {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        if (errorData.error) {
+                            // نمایش خطا در فیلد ایمیل
+                            email.setCustomValidity(errorData.error);
+                            email.reportValidity(); // نمایش پیام
+                        }
+                    } else {
+                        // موفقیت‌آمیز
+                        // alert("Signup successful!");
+                        window.location.href = "{{ url_for('auth.dashboard') }}"; // هدایت به داشبورد
+                    }
+                } catch (error) {
+                    console.error("An error occurred:", error);
+                }
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                if (errorData.error) {
-                    // نمایش خطا در فیلد ایمیل
-                    email.setCustomValidity(errorData.error);
-                    email.reportValidity(); // نمایش پیام
-                }
-            } else {
-                // موفقیت‌آمیز
-                // alert("Signup successful!");
-                window.location.href = "{{ url_for('auth.dashboard') }}"; // هدایت به داشبورد
-            }
-        } catch (error) {
-            console.error("An error occurred:", error);
-        }
-    });
-
-    email.addEventListener("input", function () {
-        email.setCustomValidity("");
-    });
-});
+            email.addEventListener("input", function () {
+                email.setCustomValidity("");
+            });
+        });
     </script>
 </body>
 
