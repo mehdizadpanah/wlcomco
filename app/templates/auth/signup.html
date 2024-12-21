@@ -26,34 +26,65 @@
                                     <h3 class="text-center font-weight-light my-4">Create Account</h3>
                                 </div>
                                 <div class="card-body">
-                                    <form id="signup-form" method="POST" action="{{ url_for('auth.signup') }}">
+                                    <form id="signup-form" method="POST" action="{{ url_for('auth.signup') }}" novalidate>
                                         {{ form.hidden_tag() }} <!-- برای CSRF -->
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    {{form.name(class="form-control" ,placeholder="Enter yout full name")}}
+                                                    {{form.name(class="form-control" ,placeholder="Enter yout full
+                                                    name")}}
                                                     {{form.name.label}}
-                                                    <!-- <input class="form-control" id="name" name="name" type="text"
-                                                        placeholder="Enter your full name" required minlength="3" />
-                                                    <label for="name">Full name</label> -->
+                                                    {% if form.name.errors %}
+                                                    <div class="text-danger">
+                                                        {% for error in form.name.errors %}
+                                                        <small>{{ error }}</small>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            {{form.email(class="form-control" ,placeholder="name@example.com",type="email")}}
+                                            {{form.email(class="form-control"
+                                            ,placeholder="name@example.com")}}
                                             {{form.email.label}}
+                                            {% if form.email.errors %}
+                                            <div class="text-danger">
+                                                {% for error in form.email.errors %}
+                                                <small>{{ error }}</small>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    {{form.password(class="form-control", placeholder="Create password",id="password")}}
+                                                    {{form.password(class="form-control", placeholder="Create
+                                                    password",id="password")}}
                                                     {{form.password.label}}
+                                                    {% if form.password.errors %}
+                                                    <div class="text-danger">
+                                                        {% for error in form.password.errors %}
+                                                        <small>{{ error }}</small>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% endif %}
+
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    {{form.confirm_password(class="form-control", placeholder="confirm_password",id="confirm_passwordA")}}
+                                                    {{form.confirm_password(class="form-control",
+                                                    placeholder="confirm_password",id="confirm_passwordA")}}
                                                     {{form.confirm_password.label}}
+                                                    {% if form.confirm_password.errors %}
+                                                    <div class="text-danger">
+                                                        {% for error in form.confirm_password.errors %}
+                                                        <small>{{ error }}</small>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% endif %}
+
                                                 </div>
                                             </div>
                                         </div>
@@ -98,58 +129,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='custom/js/scripts.js') }}">
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("signup-form");
-            const email = document.getElementById("email");
-            const password = document.getElementById("password");
-            const confirmPassword = document.getElementById("confirm_password");
-
-            function validatePassword() {
-                if (password.value !== confirmPassword.value) {
-                    confirmPassword.setCustomValidity("Passwords do not match.");
-                } else {
-                    confirmPassword.setCustomValidity("");
-                }
-            }
-
-            password.addEventListener("input", validatePassword);
-            confirmPassword.addEventListener("input", validatePassword);
-
-            form.addEventListener("submit", async function (event) {
-                event.preventDefault(); // جلوگیری از ارسال پیش‌فرض فرم
-
-                // داده‌های فرم
-                const formData = new FormData(form);
-
-                try {
-                    const response = await fetch("{{ url_for('auth.signup') }}", {
-                        method: "POST",
-                        body: formData,
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        if (errorData.error) {
-                            // نمایش خطا در فیلد ایمیل
-                            email.setCustomValidity(errorData.error);
-                            email.reportValidity(); // نمایش پیام
-                        }
-                    } else {
-                        // موفقیت‌آمیز
-                        // alert("Signup successful!");
-                        window.location.href = "{{ url_for('auth.dashboard') }}"; // هدایت به داشبورد
-                    }
-                } catch (error) {
-                    console.error("An error occurred:", error);
-                }
-            });
-
-            email.addEventListener("input", function () {
-                email.setCustomValidity("");
-            });
-        });
-    </script>
 </body>
 
 </html>

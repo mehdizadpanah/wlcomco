@@ -16,9 +16,10 @@ auth_bp = Blueprint('auth', __name__)
 # تنظیمات OAuth برای گوگل
 client_id = os.getenv('OAUTH_CLIENT_ID')
 client_secret = os.getenv('OAUTH_CLIENT_SECRET')
-authorization_base_url = 'https://accounts.google.com/o/oauth2/auth'
-token_url = 'https://accounts.google.com/o/oauth2/token'
 redirect_uri = os.getenv('OAUTH_REDIRECT_URI')
+authorization_base_url = os.getenv('OAUTH_AUTHORIZATION_BASE_URL')
+token_url = os.getenv('OAUTH_TOKEN_URL')
+
 
 
 @auth_bp.route('/')
@@ -39,15 +40,11 @@ def login():
     form = LoginForm()
     if request.method == 'POST':  
         if form.validate_on_submit():
-            email = form.email.data
-            password = form.password.data
-
             # جستجوی کاربر در پایگاه داده
-            user = User.query.filter_by(email=email).first()
-
+            user = User.query.filter_by(email=form.email.data).first()
             if user:
                 if user.auth_provider == "local":  # بررسی نوع کاربر
-                    if user.check_password(password):  # بررسی رمز عبور
+                    if user.check_password(form.password.data):  # بررسی رمز عبور
                         login_user(user)
                         return redirect(url_for('auth.dashboard'))
                     flash ('Invalid username or password','danger')
@@ -56,8 +53,9 @@ def login():
                 return render_template('auth/login.html', form=form)
             flash ('Invalid username or password','danger')
             return render_template('auth/login.html', form=form)
-        flash ('Your data entry is not valid','danger')
-        return render_template('auth/login.html',form=form)
+        
+    if form.errors:
+        handle_form_errors(form)
 
     return render_template('auth/login.html',form=form)
 
@@ -66,33 +64,18 @@ def login():
 def signup():
     form=SignupForm()
     if request.method == 'POST':
-        email = form.email.data
-        name  = form.name.data
-        password = form.password.data
-        confirm_password = form.confirm_password.data
-        
-        # بررسی اینکه آیا ایمیل قبلاً ثبت شده است
-        user = User.query.filter_by(email=email).first()
-        if user:
-            return jsonify({"error": "Email already registered."}), 400
-
-        if form.validate_on_submit:
+        if form.validate_on_submit():
             # ایجاد کاربر جدید
-            new_user = User(
-            email=email,
-            name=name,
-            auth_provider="local")  # مقداردهی auth_provider به "local"
-
-            new_user.set_password(password)  # هش کردن رمز عبور
-            db.session.add(new_user)
-            db.session.commit()
-
-            # ورود کاربر پس از ثبت‌نام
-            login_user(new_user)
-            flash ('Welcome! We are glad to have you here.','success')
+            new_user = User(auth_provider="local")  # مقداردهی auth_provider به "local"
+            if save_user_fields(new_user,form,['name','email','password'],is_new=True):
+                # ورود کاربر پس از ثبت‌نام
+                login_user(new_user)
+                flash ('Welcome! We are glad to have you here.','success')
             return redirect(url_for('auth.dashboard'))
         
-        flash ('Your data is not validating','error')
+        if form.errors:
+            handle_form_errors(form)
+
         return render_template('auth/signup.html',form=form)
         
     # برای لود اولیه فرم، پیام خطا ارسال نمی‌شود
@@ -103,16 +86,18 @@ def signup():
 @login_required
 def profile():
     form = ProfileForm()
+    user = User.query.filter_by(email=form.email.data).first()
+    
     if request.method == 'POST':
-        # به‌روزرسانی نام کاربر
-        isChange = False
-        if current_user.name != form.name.data:
-            isChange = True
-        if isChange == True:
-            current_user.name = form.name.data
-            db.session.commit()
-            flash("Profile updated successfully!", "success")
-        return redirect(url_for('auth.dashboard'))
+        if form.validate_on_submit():
+            # به‌روزرسانی نام کاربر
+            if save_user_fields(current_user, form, ['name', 'email']):
+                flash("Profile updated successfully!", "success")
+
+            return redirect(url_for('auth.dashboard'))
+        
+        if form.errors:
+            handle_form_errors(form)
     
     if request.method == 'GET':
         # اطلاعات کاربر فعلی را به قالب ارسال می‌کنیم
@@ -124,15 +109,24 @@ def profile():
 @auth_bp.route('/change_password', methods=['GET', 'POST'])
 @login_required
 def change_password():
-    form = ChangePasswordForm()
+    form = ChangePasswordForm(email=current_user.email)
     if request.method == 'POST':
-        # بروزرسانی پروفایل کاربر
-        current_user.set_password(form.password.data)
+        if form.validate_on_submit():
+            # بروزرسانی پروفایل کاربر
+            save_user_fields(current_user,form,['password'])
 
-        db.session.commit()
-        flash ('Password changed successfully.','success')
-        return redirect(url_for('auth.dashboard'))
+            db.session.commit()
+            flash ('Password changed successfully.','success')
+            return redirect(url_for('auth.dashboard'))
     
+    if request.method == 'GET':
+        if current_user.auth_provider == "google":
+            flash ('You cannot change your password when you are logged in with your Google account.','info')
+            return redirect(url_for('auth.dashboard'))
+
+    if form.errors:
+        handle_form_errors(form)
+
     # اطلاعات کاربر فعلی را به قالب ارسال می‌کنیم
     return render_template('auth/change_password.html', form=form)
 
@@ -176,3 +170,43 @@ def dashboard():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
+
+def save_user_fields(user, form, fields, is_new=False):
+    """
+    ذخیره یا به‌روزرسانی فیلدهای مشخص‌شده برای کاربر، با پشتیبانی از رمز عبور.
+    
+    :param user: شیء مدل کاربر (اگر کاربر جدید باشد، شیء باید از نوع User باشد).
+    :param form: شیء فرم که داده‌های جدید را در خود دارد.
+    :param fields: لیستی از نام فیلدهایی که باید ذخیره یا به‌روزرسانی شوند.
+    :param is_new: اگر True باشد، کاربر جدید است و باید به پایگاه داده اضافه شود.
+    :return: True اگر تغییری ایجاد یا ذخیره شد، False اگر هیچ تغییری ایجاد نشد.
+    """
+    updated = False  # برای بررسی تغییرات
+    for field in fields:
+        if hasattr(user, field) and hasattr(form, field):
+            new_value = getattr(form, field).data
+
+            # اگر فیلد password است، از متد set_password استفاده شود
+            if field == "password":
+                if is_new or not user.check_password(new_value):  # بررسی تغییر رمز عبور
+                    user.set_password(new_value)  # هش کردن رمز عبور
+                    updated = True
+            elif is_new or getattr(user, field) != new_value:  # بررسی تغییر سایر فیلدها
+                setattr(user, field, new_value)
+                updated = True
+
+    if updated:
+        if is_new:  # اگر کاربر جدید است
+            db.session.add(user)
+        db.session.commit()  # ذخیره تغییرات
+        return True
+    return False
+
+
+
+def handle_form_errors(form):
+    for field, errors in form.errors.items():
+        if field not in form._fields:
+            for error in errors:
+                flash(f"{field}: {error}", "danger")
