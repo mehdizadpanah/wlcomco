@@ -90,21 +90,19 @@
                             </nav>
                         </div>
                         <!-- General setting menu -->
-                        {% if current_user.role == 'admin' %}
+                        {% if current_user.role != 'admin' %}
                         <div class="sb-sidenav-menu-heading">General Settings</div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
                             data-bs-target="#collapseGeneralSttings" aria-expanded="false"
-                            aria-controls="collapseGeneralSttings">
+                            aria-controls="collapseGeneralSttings" data-bs-auto-close="false">
                             <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                            Settings
+                            General Settings
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseGeneralSttings" aria-labelledby="headingTwo"
                             data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                                <a class="nav-link" href="{{ url_for('auth.login') }}">Users</a>
-                                <a class="nav-link" href="{{ url_for('auth.signup') }}">Resturants</a>
-
+                                <a class="nav-link" href="{{ url_for('general_settings.channels') }}">Channels</a>
                             </nav>
                         </div>
                         {% endif %}

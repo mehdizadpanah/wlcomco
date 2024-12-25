@@ -14,7 +14,7 @@ sudo yum install mod_ssl
 ----------------------------------------------
 pip3 install flask pymysql
 pip3 install flask_sqlalchemy flask_login requests requests-oauthlib flask-migrate flask-sqlalchemy
-pip install bcrypt Flask-WTF python-dotenv email-validator
+pip install bcrypt Flask-WTF python-dotenv email-validator redis cryptography
 
 
 
@@ -45,6 +45,17 @@ if __name__ == '__main__':
     app.run()
 -----------------------------------------------
 sudo dnf install mod_wsgi -y
+-----------------------------
+sudo dnf install epel-release
+sudo dnf update
+sudo dnf install redis
+
+sudo nano /etc/redis/redis.conf
+requirepass StrongPassword123
+
+sudo systemctl start redis
+sudo systemctl enable redis
+
 ---------------------------------
 sudo nano /etc/httpd/conf.d/wlcomco.conf
 
