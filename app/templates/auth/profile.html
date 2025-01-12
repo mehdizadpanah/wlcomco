@@ -1,96 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>Profile</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='custom/css/styles.css') }}">
-
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-</head>
-
-<body class="bg-light">
-    <div id="layoutAuthentication">
-        <div id="layoutAuthentication_content">
-            <main>
-                <div class="container">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-7">
-                            <div class="card shadow-lg border-0 rounded-lg mt-5">
-                                <div class="card-header">
-                                    <h3 class="text-center font-weight-light my-4">Profile</h3>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card shadow-lg border-0 rounded-lg mt-5">
+            <div class="card-header">
+                <h3 class="text-center font-weight-light my-4">Profile</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('auth.profile') }}" novalidate 
+                data-redirect="{{ url_for('auth.dashboard') }}">
+                    {{ form.hidden_tag() }}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3 mb-md-0">
+                                {{ form.name(class="form-control", placeholder="Your Name") }}
+                                {{ form.name.label }}
+                                {% if form.name.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.name.errors %}
+                                    {{ error }}
+                                    {% endfor %}
                                 </div>
-                                <div class="card-body">
-                                    <form id="profile-form" method="POST" action="{{ url_for('auth.profile') }}" novalidate>
-                                        {{ form.hidden_tag() }} <!-- برای CSRF -->
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3 mb-md-0">
-                                                    {{form.name(class="form-control",placeholder="your name")}}
-                                                    {{form.name.label}}
-                                                    {% if form.name.errors %}
-                                                    <div class="text-danger">
-                                                        {% for error in form.name.errors %}
-                                                        <small>{{ error }}</small>
-                                                        {% endfor %}
-                                                    </div>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{form.email(class="form-control",placeholder="Enter email")}}
-                                            {{form.email.label}}
-                                            {% if form.email.errors %}
-                                            <div class="text-danger">
-                                                {% for error in form.email.errors %}
-                                                <small>{{ error }}</small>
-                                                {% endfor %}
-                                            </div>
-                                            {% endif %}
-                                        </div>
-                                        <div class="mt-4 mb-0">
-                                            <div class="row">
-                                                <div class="col-md-6"><button type="submit"
-                                                        class="btn btn-primary w-100">Save</button>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <a href="{{ url_for('auth.dashboard') }}"
-                                                        class="btn btn-secondary w-100">Cancel</a>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </form>
-                                </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
-                </div>
-            </main>
-        </div>
-        <div id="layoutAuthentication_footer">
-            <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; COMCO 2024</div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
-                            <a href="#">Terms &amp; Conditions</a>
+                    <div class="form-floating mb-3">
+                        {{ form.email(class="form-control", placeholder="Enter Email") }}
+                        {{ form.email.label }}
+                        {% if form.email.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.email.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                    </div>
+                    <div class="mt-4 mb-0">
+                        <div class="row gx-2 gy-2">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary w-100">Save</button>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{{ url_for('auth.dashboard') }}"
+                                    class="btn btn-secondary w-100 ajax-link">Cancel</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </footer>
+                </form>
+            </div>
         </div>
     </div>
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='custom/js/scripts.js') }}">
-
-</body>
-
-</html>
+</div>
+{% endblock %}

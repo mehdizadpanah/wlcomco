@@ -25,10 +25,16 @@ token_url = os.getenv('OAUTH_TOKEN_URL')
 @auth_bp.route('/')
 def index():
     if current_user.is_authenticated:  # بررسی لاگین بودن کاربر
-        return render_template('dashboard.html', name=current_user.name)
-  # هدایت به داشبورد
+        # هدایت به dashboard.html
+        return redirect(url_for('auth.dashboard'))
+    
     return redirect(url_for('auth.login'))  # هدایت به لاگین
 
+@auth_bp.route('/flash-messages')
+@login_required
+def flash_messages():
+    return render_template('includes/_flash_messages.html')
+    
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -86,23 +92,21 @@ def signup():
 @login_required
 def profile():
     form = ProfileForm()
-    user = User.query.filter_by(email=form.email.data).first()
     
     if request.method == 'POST':
         if form.validate_on_submit():
-            # به‌روزرسانی نام کاربر
+            # ذخیره اطلاعات فرم در کاربر فعلی
             if save_user_fields(current_user, form, ['name', 'email']):
                 flash("Profile updated successfully!", "success")
-
-            return redirect(url_for('auth.dashboard'))
+                return redirect(url_for('auth.dashboard'))  # هدایت به داشبورد در صورت موفقیت
         
-        if form.errors:
-            handle_form_errors(form)
-    
-    if request.method == 'GET':
-        # اطلاعات کاربر فعلی را به قالب ارسال می‌کنیم
-        form.name.data = current_user.name
-        form.email.data = current_user.email
+        return render_template('auth/profile.html', form=form)
+
+    # مقداردهی اولیه به فرم
+    form.name.data = current_user.name
+    form.email.data = current_user.email
+
+    # نمایش اولیه صفحه
     return render_template('auth/profile.html', form=form)
 
 
@@ -113,11 +117,9 @@ def change_password():
     if request.method == 'POST':
         if form.validate_on_submit():
             # بروزرسانی پروفایل کاربر
-            save_user_fields(current_user,form,['password'])
-
-            db.session.commit()
-            flash ('Password changed successfully.','success')
-            return redirect(url_for('auth.dashboard'))
+            if save_user_fields(current_user,form,['password']):
+                flash ('Password changed successfully.','success')
+                return redirect(url_for('auth.dashboard'))
     
     if request.method == 'GET':
         if current_user.auth_provider == "google":
@@ -162,7 +164,9 @@ def callback():
 @auth_bp.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', name=current_user.name)
+        
+    return render_template('dashboard.html')
+    
 
 
 @auth_bp.route('/logout')

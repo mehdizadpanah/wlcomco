@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    {{ form.hidden_tag() }}
+    <div class="d-flex align-items-center mb-4">
+        <h6 class="mb-0 me-3">Email SMTP Information</h6>
+        <a href="{{ url_for('general_settings.smtp_settings') }}" class="link-secondary link-opacity-10-hover link-offcet-2">
+            <i class="fa-solid fa-pen"></i>
+        </a>
+    </div>
+
+    <div class="row py-2">
+        <div class="col-2 text-end text-muted" style="width: 170px;">{{form.smtp_host.label}}</div>
+        <div class="col-6">{{form.smtp_host.data}}</div>
+    </div>
+    <div class="row py-2">
+        <div class="col-2 text-end text-muted" style="width: 170px;">{{form.smtp_host.label}}</div>
+        <div class="col-6">{{form.smtp_port.data}}</div>
+    </div>
+    <div class="row py-2">
+        <div class="col-2 text-end text-muted" style="width: 170px;">{{form.smtp_username.label}}</div>
+        <div class="col-6">{{form.smtp_username.data}}</div>
+    </div>
+    <div class="row py-2">
+        <div class="col-2 text-end text-muted" style="width: 170px;">{{form.smtp_password.label}}</div>
+        <div class="col-6">******</div>
+    </div>
+    <div class="row py-2">
+        <div class="col-2 text-end text-muted" style="width: 170px;">{{form.smtp_security.label}}</div>
+        <div class="col-6">{{form.smtp_security.data}}</div>
+    </div>
+</div>
+
+{% endblock %}

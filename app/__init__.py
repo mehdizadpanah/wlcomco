@@ -1,7 +1,9 @@
 from flask import Flask
+from flask_migrate import upgrade
+from sqlalchemy import inspect
 from .extensions import db, migrate, login_manager
 from .routes import Blueprints
-from .models import User,Setting
+from .models import User,Setting,Notification
 from .extensions import RedisClient
 
 
@@ -9,9 +11,10 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')  # تنظیمات از فایل config
 
+
+
     # مقداردهی اولیه اکستنشن‌ها
     db.init_app(app)
-    migrate.init_app(app, db)  # راه‌اندازی Flask-Migrate
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'  # تنظیم مسیر لاگین پیش‌فرض
 
@@ -20,12 +23,38 @@ def create_app():
         app.register_blueprint(bluprint)
 
     with app.app_context():
+        migrate.init_app(app, db, directory="/var/www/wlcomco/migrations") # راه‌اندازی Flask-Migrate
+
+        # upgrade()
+        inspector = inspect(db.engine) # ساخت متغیر برای کنترل وجود دیتابیس
+
         create_default_user()
         create_default_settings()
+        if 'notification' in inspector.get_table_names():
+            create_default_notification_templates()
         load_settings_to_cache()
 
     return app
 
+def create_default_notification_templates(): 
+    """ایجاد رکوردهای پیش‌فرض برای قالب‌های ایمیل/پیامک"""
+    default_templates = [
+        {
+            "name": "Email Verification",
+            "send_via": "Email",
+            "content_type": "HTML",
+            "description": "This email template is used to send a verification link to users after they register or update their email address.",
+            "subject": "Verify Your Email Address",
+            "body": "<h1>Welcome {{ name }}</h1><p>Your account has been created successfully.</p>"
+        }]
+    
+    for template in default_templates:
+        if not Notification.query.filter_by(name=template['name']).first():
+            new_template = Notification(**template)
+            db.session.add(new_template)
+    
+    db.session.commit()
+    print("Default notification templates added.")
 
 def create_default_user(): # ساخت کاربر پیش فرض
     """ایجاد کاربر پیش‌فرض اگر وجود نداشته باشد"""

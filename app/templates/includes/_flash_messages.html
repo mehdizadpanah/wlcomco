@@ -1,43 +1,25 @@
 {% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flash Messages</title>
-    <link href="{{ url_for('static', filename='custom/css/styles.css') }}" rel="stylesheet" />
-    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
-
-</head>
-
-<body>
-    <div class="flash-message-container position-fixed top-0 start-50 translate-middle-x mt-3"
-        style="z-index: 9999; max-width: 400px;">
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show shadow" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    {% if messages %}
+        <div class="flash-message-container position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1050;">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show flash-message shadow" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
-    <script>
-        // حذف پیام‌ها بعد از 5 ثانیه
-        document.addEventListener('DOMContentLoaded', function () {
-            setTimeout(function () {
-                let alerts = document.querySelectorAll('.alert');
-                alerts.forEach(function (alert) {
-                    alert.classList.remove('show'); // حذف کلاس show برای شروع محو شدن
-                    alert.classList.add('fade');    // اضافه کردن کلاس fade برای محو شدن
-                    setTimeout(() => alert.remove(), 1000); // حذف کامل بعد از محو شدن
-                });
-            }, 5000);
-        });
-    </script>
-        <!-- <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script> -->
-</body>
-</html>
-
-{% endif %}
+    {% endif %}
 {% endwith %}
+<script>
+    // فید شدن پیام‌های فلش پس از 5 ثانیه
+    document.addEventListener("DOMContentLoaded", function () {
+        const flashMessages = document.querySelectorAll('.flash-message');
+        flashMessages.forEach(message => {
+            setTimeout(() => {
+                message.classList.add('fade'); // اضافه کردن کلاس fade
+                message.classList.remove('show'); // حذف کلاس show برای شروع فید
+                setTimeout(() => message.remove(), 1000); // حذف کامل پیام پس از 1 ثانیه
+            }, 5000); // زمان انتظار 5 ثانیه
+        });
+    });
+</script>

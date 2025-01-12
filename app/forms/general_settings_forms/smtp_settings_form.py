@@ -3,7 +3,7 @@ from wtforms.widgets import PasswordInput
 from wtforms import StringField, IntegerField, PasswordField,SelectField,HiddenField
 from wtforms.validators import DataRequired
 
-class ChannelsForm(FlaskForm):
+class SMTPSettingsForm(FlaskForm):
     smtp_host = StringField('SMTP Host', validators=[DataRequired()])
     smtp_port = IntegerField('SMTP Port', validators=[DataRequired()])
     smtp_username = StringField('SMTP Username', validators=[DataRequired()])

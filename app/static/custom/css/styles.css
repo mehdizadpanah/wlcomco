@@ -7894,6 +7894,7 @@ fieldset:disabled .btn {
   z-index: 1030;
 }
 
+
 .fixed-bottom {
   position: fixed;
   right: 0;
@@ -12774,6 +12775,12 @@ body {
   margin-left: -225px;
 }
 
+#content-container {
+  padding: 20px; /* تنظیم فاصله داخلی */
+  max-width: 100%; /* جلوگیری از گسترش عرض */
+  overflow-x: hidden; /* جلوگیری از اسکرول افقی */
+}
+
 .sb-sidenav-toggled #layoutSidenav #layoutSidenav_nav {
   transform: translateX(0);
 }
@@ -12907,7 +12914,7 @@ body {
 .sb-sidenav .sb-sidenav-menu .nav .nav-link {
   display: flex;
   align-items: center;
-  padding-top: 0.75rem;
+  padding-top: 0rem;
   padding-bottom: 0.75rem;
   position: relative;
 }

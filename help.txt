@@ -103,4 +103,6 @@ for update DATABASE
 flask --app app:create_app db init
 flask db migrate -m "Description"
 flask db upgrade
+flask db current //ورژن دیتابیس را به فعلی بر میگرداند
+
 
