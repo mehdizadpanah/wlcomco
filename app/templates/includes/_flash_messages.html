@@ -3,7 +3,7 @@
         <div class="flash-message-container position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1050;">
             {% for category, message in messages %}
                 <div class="alert alert-{{ category }} alert-dismissible fade show flash-message shadow" role="alert">
-                    {{ message }}
+                    {{ message|safe }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endfor %}

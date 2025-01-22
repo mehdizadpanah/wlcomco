@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Resend Confirmation</title>
+    <!-- سبک‌های سفارشی و بوت‌استرپ -->
+    <link href="{{ url_for('static', filename='custom/css/styles.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="bg-light">
+    {% include "includes/_flash_messages.html" %}
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-header">
+                                    <h3 class="text-center font-weight-light my-4">Resend Confirmation</h3>
+                                </div>
+                                <div class="card-body">
+                                    <!-- فرم ارسال مجدد تأیید ایمیل -->
+                                    <form method="POST" action="{{ url_for('auth.resend_confirmation') }}" novalidate>
+                                        {{ form.hidden_tag() }} <!-- برای CSRF (در صورت نیاز) -->
+                                        <div class="form-floating mb-3">
+                                            {{ form.email(class="form-control", placeholder="name@example.com") }}
+                                            {{ form.email.label }}
+                                            {% if form.email.errors %}
+                                                <div class="text-danger">
+                                                    {% for error in form.email.errors %}
+                                                        <small>{{ error }}</small>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="d-grid mt-4">
+                                            <button type="submit" class="btn btn-primary">Resend Email</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="card-footer text-center py-3">
+                                    <div class="small">
+                                        <a href="{{ url_for('auth.login') }}">Back to Login</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div id="layoutAuthentication_footer">
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">&copy; COMCO 2024</div>
+                        <div>
+                            <a href="#">Privacy Policy</a>
+                            &middot;
+                            <a href="#">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!-- اسکریپت بوت‌استرپ -->
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+</body>
+
+</html>

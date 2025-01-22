@@ -8,7 +8,7 @@
                 <h3 class="text-center font-weight-light my-4">Notification Settings</h3>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ url_for('general_settings.notification') }}" novalidate>
+                <form method="POST" action="{{ url_for('general_settings.notification', notification_id=notification.id) }}" novalidate>
                     {{ form.hidden_tag() }}
 
                     <!-- Notification Name -->
@@ -17,6 +17,8 @@
                             <div class="form-floating mb-3 mb-md-0">
                                 {{ form.name(class="form-control", placeholder="Notification Name", disabled = True) }}
                                 {{ form.name.label }}
+                                <input type="hidden" name="name" value="{{ form.name.data }}">
+
                                 {% if form.name.errors %}
                                 <div class="text-danger mt-1">
                                     {% for error in form.name.errors %}
@@ -50,7 +52,9 @@
                         <div class="col-md-6">
                             <div class="form-floating mb-3 mb-md-0">
                                 {{ form.send_via(class="form-control", disabled = True) }}
+                                <!-- <input type="text" class="form-control" value="{{ dict(form.send_via.choices).get(form.send_via.data) }}" readonly> -->
                                 {{ form.send_via.label }}
+                                <input type="hidden" name="send_via" value="{{ form.send_via.data }}">
                                 {% if form.send_via.errors %}
                                 <div class="text-danger mt-1">
                                     {% for error in form.send_via.errors %}
@@ -65,7 +69,11 @@
                         <div class="col-md-6">
                             <div class="form-floating mb-3 mb-md-0">
                                 {{ form.content_type(class="form-control",disabled=True)  }}
+                                <!-- <input type="text" class="form-control" value="{{ dict(form.content_type.choices).get(form.content_type.data) }}" readonly> -->
+
                                 {{ form.content_type.label }}
+                                <input type="hidden" name="content_type" value="{{ form.content_type.data }}">
+
                                 {% if form.content_type.errors %}
                                 <div class="text-danger mt-1">
                                     {% for error in form.content_type.errors %}
@@ -84,6 +92,8 @@
                                 {{ form.description(class="form-control", placeholder="Description"
                                 ,style="height: 80px;",disabled=True) }}
                                 {{ form.description.label }}
+                                <input type="hidden" name="description" value="{{ form.description.data }}">
+
                                 {% if form.description.errors %}
                                 <div class="text-danger mt-1">
                                     {% for error in form.description.errors %}

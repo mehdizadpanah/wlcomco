@@ -8,6 +8,7 @@ from .extensions import RedisClient
 
 
 def create_app():
+    migration = True
     app = Flask(__name__)
     app.config.from_object('config.Config')  # تنظیمات از فایل config
 
@@ -25,14 +26,20 @@ def create_app():
     with app.app_context():
         migrate.init_app(app, db, directory="/var/www/wlcomco/migrations") # راه‌اندازی Flask-Migrate
 
-        # upgrade()
-        inspector = inspect(db.engine) # ساخت متغیر برای کنترل وجود دیتابیس
-
-        create_default_user()
-        create_default_settings()
-        if 'notification' in inspector.get_table_names():
+        if migration==False:
+            create_default_user()
+            create_default_settings()
             create_default_notification_templates()
-        load_settings_to_cache()
+            load_settings_to_cache()
+        else:
+            try:
+                upgrade()  # اجرای میگریت برای به‌روزرسانی دیتابیس
+                print("Database migrated successfully.")
+
+            except Exception as e:
+                 print(f"Migration failed: {e}")
+                 raise
+
 
     return app
 
@@ -46,6 +53,13 @@ def create_default_notification_templates():
             "description": "This email template is used to send a verification link to users after they register or update their email address.",
             "subject": "Verify Your Email Address",
             "body": "<h1>Welcome {{ name }}</h1><p>Your account has been created successfully.</p>"
+        },{
+            "name": "Reset Password",
+            "send_via": "Email",
+            "content_type": "HTML",
+            "description": "Thid email template is used to send a reset password link to user",
+            "subject": "Reset your password",
+            "body":"<h1>Welcome {{ name }}</h1><p>Please reset your password.</p>"
         }]
     
     for template in default_templates:
@@ -77,6 +91,7 @@ def create_default_settings(): # کنترل و ساخت تنظیمات دیفا�
         "app_name": "WLCOMCO",
         "smtp_host": "smtp.example.com",
         "smtp_port": "587",
+        "smtp_from": "admin@example.com",
         "smtp_username": "admin@example.com",
         "smtp_password": "password123",
         "smtp_security": "SSL",

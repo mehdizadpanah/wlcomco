@@ -53,13 +53,14 @@
 
                                         </div>
                                         <div class="form-check mb-3">
-                                            <input class="form-check-input" id="inputRememberPassword" type="checkbox"
-                                                value="" />
-                                            <label class="form-check-label" for="inputRememberPassword">Remember
-                                                Password</label>
+                                            {{ form.remember_me(class="form-check-input", id="inputRememberPassword") }}
+                                            <label class="form-check-label" for="inputRememberPassword">
+                                                {{ form.remember_me.label.text }}
+                                            </label>
                                         </div>
                                         <div>
-                                            <a class="small" href="password.html">Forgot Password?</a>
+                                            <a class="small" href="{{url_for('auth.reset_password')}}">Forgot
+                                                Password?</a>
                                         </div>
 
                                         <div class="d-grid mt-3">
@@ -76,7 +77,8 @@
                                     </form>
                                 </div>
                                 <div class="card-footer text-center py-3">
-                                    <div class="small mb-3"><a href="{{ url_for('auth.signup') }}">Need an account? Sign up!</a></div>
+                                    <div class="small mb-3"><a href="{{ url_for('auth.signup') }}">Need an account? Sign
+                                            up!</a></div>
                                 </div>
 
                             </div>
@@ -101,6 +103,6 @@
         </div>
     </div>
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-        <
-</body>
+    < </body>
+
 </html>

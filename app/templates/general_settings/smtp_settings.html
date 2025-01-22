@@ -13,7 +13,7 @@
 
                     <!-- SMTP Host -->
                     <div class="row mb-3">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-floating mb-3 mb-md-0">
                                 {{ form.smtp_host(class="form-control", placeholder="SMTP Host") }}
                                 {{ form.smtp_host.label }}
@@ -26,32 +26,14 @@
                                 {% endif %}
                             </div>
                         </div>
-                    </div>
-
-
-                    <!-- SMTP Username -->
-                    <div class="row mb-3">
+                        <!-- SMTP From -->
                         <div class="col-md-6">
                             <div class="form-floating mb-3 mb-md-0">
-                                {{ form.smtp_username(class="form-control", placeholder="SMTP Username")}}
-                                {{ form.smtp_username.label }}
-                                {% if form.smtp_username.errors %}
+                                {{ form.smtp_from(class="form-control", placeholder="SMTP From")}}
+                                {{ form.smtp_from.label }}
+                                {% if form.smtp_from.errors %}
                                 <div class="text-danger mt-1">
-                                    {% for error in form.smtp_username.errors %}
-                                    {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <!-- SMTP Password -->
-                        <div class="col-md-6">
-                            <div class="form-floating mb-3 mb-md-0">
-                                {{ form.smtp_password(class="form-control", placeholder="SMTP Password",value="******") }}
-                                {{ form.smtp_password.label }}
-                                {% if form.smtp_password.errors %}
-                                <div class="text-danger mt-1">
-                                    {% for error in form.smtp_password.errors %}
+                                    {% for error in form.smtp_from.errors %}
                                     {{ error }}
                                     {% endfor %}
                                 </div>
@@ -60,53 +42,84 @@
                         </div>
                     </div>
 
-                    <!-- SMTP Security -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="form-floating mb-3 mb-md-0">
-                                {{ form.smtp_security(class="form-control", placeholder="SMTP Security") }}
-                                {{ form.smtp_security.label }}
-                                {% if form.smtp_security.errors %}
-                                <div class="text-danger mt-1">
-                                    {% for error in form.smtp_security.errors %}
-                                    {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
+            <!-- SMTP Username -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-floating mb-3 mb-md-0">
+                        {{ form.smtp_username(class="form-control", placeholder="SMTP Username")}}
+                        {{ form.smtp_username.label }}
+                        {% if form.smtp_username.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.smtp_username.errors %}
+                            {{ error }}
+                            {% endfor %}
                         </div>
-                        <!-- SMTP Port -->
-                        <div class="col-md-6">
-                            <div class="form-floating mb-3 mb-md-0">
-                                {{ form.smtp_port(class="form-control", placeholder="SMTP Port") }}
-                                {{ form.smtp_port.label }}
-                                {% if form.smtp_port.errors %}
-                                <div class="text-danger mt-1">
-                                    {% for error in form.smtp_port.errors %}
-                                    {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
+                        {% endif %}
                     </div>
+                </div>
+                <!-- SMTP Password -->
+                <div class="col-md-6">
+                    <div class="form-floating mb-3 mb-md-0">
+                        {{ form.smtp_password(class="form-control", placeholder="SMTP Password",value="******") }}
+                        {{ form.smtp_password.label }}
+                        {% if form.smtp_password.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.smtp_password.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- SMTP Security -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-floating mb-3 mb-md-0">
+                        {{ form.smtp_security(class="form-control", placeholder="SMTP Security") }}
+                        {{ form.smtp_security.label }}
+                        {% if form.smtp_security.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.smtp_security.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- SMTP Port -->
+                <div class="col-md-6">
+                    <div class="form-floating mb-3 mb-md-0">
+                        {{ form.smtp_port(class="form-control", placeholder="SMTP Port") }}
+                        {{ form.smtp_port.label }}
+                        {% if form.smtp_port.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.smtp_port.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
 
-                    <!-- دکمه‌ها -->
-                    <div class="mt-4 mb-0">
-                        <div class="row gx-2 gy-2">
-                            <div class="col-md-6">
-                                <button type="submit" class="btn btn-primary w-100">Save</button>
-                            </div>
-                            <div class="col-md-6">
-                                <button type="button" class="btn btn-secondary w-100" 
-                                    onclick="location.href='{{ url_for('general_settings.channel_settings') }}'">
-                                    Back
-                                </button>
-                            </div>
-                </form>
+            <!-- دکمه‌ها -->
+            <div class="mt-4 mb-0">
+                <div class="row gx-2 gy-2">
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-primary w-100">Save</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-secondary w-100"
+                            onclick="location.href='{{ url_for('general_settings.channel_settings') }}'">
+                            Back
+                        </button>
+                    </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+    {% endblock %}

@@ -19,7 +19,7 @@
                     <a class="nav-link" href="#!">Light Sidenav</a>
                 </nav>
             </div>
-            {% if current_user.role != 'admin' %}
+            {% if current_user.role == 'admin' %}
             <div class="sb-sidenav-menu-heading">General Settings</div>
             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseGeneralSttings"
                 aria-expanded="false" aria-controls="collapseGeneralSttings">

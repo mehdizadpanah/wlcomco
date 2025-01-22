@@ -18,3 +18,7 @@ class Notification(db.Model, TimestampMixin, UserTrackingMixin):
     def get_notifications():
         notifications = Notification.query.all()
         return notifications
+    
+    def get_notification(id):
+        notification = Notification.query.filter_by(id==id)
+        return notification

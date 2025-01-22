@@ -104,5 +104,16 @@ flask --app app:create_app db init
 flask db migrate -m "Description"
 flask db upgrade
 flask db current //ورژن دیتابیس را به فعلی بر میگرداند
+-----------
+redis-cli
+auth
+get
+-----------
+sudo lsof -i :5000
+sudo kill -9 <PID>
+export $(cat /var/www/wlcomco/.env.debug | xargs)
+PYTHONPATH=/var/www/wlcomco python -m debugpy --listen 0.0.0.0:5678 run.py
 
-
+---------------------------------------------
+flask db migrate -m "ChangeName"
+flask db upgrade

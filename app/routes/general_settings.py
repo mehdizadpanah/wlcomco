@@ -35,6 +35,7 @@ def channel_settings():
         form.smtp_host.data = Setting.get_setting('smtp_host', '')
         form.smtp_port.data = Setting.get_setting('smtp_port', '')
         form.smtp_username.data = Setting.get_setting('smtp_username', '')
+        form.smtp_from.data = Setting.get_setting('smtp_from', '')
         form.smtp_password.data = Setting.get_setting('smtp_password', '')
         form.smtp_security.data = Setting.get_setting('smtp_security', '')
 
@@ -44,6 +45,7 @@ def channel_settings():
 
 
 @general_settings_bp.route('/smtp_settings', methods=['GET', 'POST'])
+@login_required
 def smtp_settings():
     form = SMTPSettingsForm()
     if request.method=='POST':
@@ -54,6 +56,7 @@ def smtp_settings():
             if form.smtp_password.data!= "******":
                 Setting.set_setting('smtp_password', form.smtp_password.data)
             Setting.set_setting('smtp_security', form.smtp_security.data)
+            Setting.set_setting('smtp_from', form.smtp_from.data)
 
             flash('SMTP settings updated successfully.', 'success')
             return redirect(url_for('general_settings.channel_settings'))
@@ -64,37 +67,34 @@ def smtp_settings():
         form.smtp_username.data = Setting.get_setting('smtp_username', '')
         form.smtp_password.data = Setting.get_setting('smtp_password', '')
         form.smtp_security.data = Setting.get_setting('smtp_security', '')
+        form.smtp_from.data = Setting.get_setting('smtp_from', '')
+
 
     return render_template('general_settings/smtp_settings.html', form=form)
 
 # لیست نوتیفیکیشن‌ها
 @general_settings_bp.route('/notifications', methods=['GET'])
+@login_required
 def notifications():
     notifications = Notification.get_notifications()
     return render_template('general_settings/notifications.html', notifications=notifications)
 
 
-@general_settings_bp.route('/notification/<int:notification_id>', methods=['GET'])
-@general_settings_bp.route('/notification', methods=['POST'])
+@general_settings_bp.route('/notification/<int:notification_id>', methods=['GET','POST'])
 @login_required
-def notification(notification_id=None):
-    if request.method == 'GET':
+def notification(notification_id):
+    notification = Notification.query.get_or_404(notification_id)
+    form = NotificationForm(obj=notification)
+
         # دریافت نوتیفیکیشن بر اساس ID
-        if notification_id is None:
-            flash("Notification ID is required for editing.", "danger")
-            return redirect(url_for('general_settings.notifications'))
+    if notification_id is None:
+        flash("Notification ID is required for editing.", "danger")
+        return redirect(url_for('general_settings.notifications'))
 
-        notification = Notification.query.get_or_404(notification_id)
-        form = NotificationForm(obj=notification)  # مقداردهی اولیه فرم با داده‌های موجود
-
-        return render_template(
-            'general_settings/notification.html',form=form)
-
-    elif request.method == 'POST':
+    if request.method == 'POST':
         # مدیریت ارسال فرم (بدون نیاز به notification_id)
-        form = NotificationForm()
         if form.validate_on_submit():
-            notification_id = request.form.get("id")  # دریافت ID از فرم
+            # notification_id = request.form.get("id")  # دریافت ID از فرم
             notification = Notification.query.get_or_404(notification_id)
 
             # به‌روزرسانی مقادیر نوتیفیکیشن
@@ -103,7 +103,4 @@ def notification(notification_id=None):
             flash('Notification updated successfully!', 'success')
             return redirect(url_for('general_settings.notifications'))
 
-        return render_template(
-            'general_settings/notification.html',
-            form=form
-        )
+    return render_template('general_settings/notification.html',form=form,notification=notification)
