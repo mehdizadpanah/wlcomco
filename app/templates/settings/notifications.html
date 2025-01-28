@@ -17,7 +17,7 @@
                 <td>{{ notification.name }}</td>
                 <td>{{ notification.description }}</td>
                 <td>
-                    <a href="{{ url_for('general_settings.notification', notification_id=notification.id) }}" class="link-secondary">
+                    <a href="{{ url_for('settings.notification', notification_name=notification.name) }}" class="link-secondary">
                         <i class="fa-solid fa-pen"></i>
                     </a>
                 </td>

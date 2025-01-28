@@ -8,7 +8,7 @@
                 <h3 class="text-center font-weight-light my-4">SMTP Settings</h3>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ url_for('general_settings.smtp_settings') }}" novalidate>
+                <form method="POST" action="{{ url_for('settings.smtp_settings') }}" novalidate>
                     {{ form.hidden_tag() }}
 
                     <!-- SMTP Host -->
@@ -113,7 +113,7 @@
                     </div>
                     <div class="col-md-6">
                         <button type="button" class="btn btn-secondary w-100"
-                            onclick="location.href='{{ url_for('general_settings.channel_settings') }}'">
+                            onclick="location.href='{{ url_for('.channel_settings') }}'">
                             Back
                         </button>
                     </div>

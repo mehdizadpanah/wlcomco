@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    {{ form.hidden_tag() }}
+
+    <!-- عنوان جدول -->
+    <div class="d-flex align-items-center mb-4">
+        <h4 class="mb-0 me-3">Settings</h4>
+    </div>
+
+    <!-- جدول تنظیمات -->
+    <table class="table">
+        <thead class="bg-light text-muted" style="background-color: #e0e0e0 !important;">
+            <tr>
+                <th scope="col" class="d-flex col-4">
+                    <div class="mb-0 me-3">General Settings</div>
+                    <a href="{{ url_for('settings.general_settings') }}" class="link-secondary link-opacity-10-hover link-offset-2">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                </th>
+                <th scope="col" class="col-6 text-muted"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ form.app_title.label }}</td>
+                <td class="text-muted">{{ form.app_title.data }}</td>
+            </tr>
+            <tr>
+                <td>{{ form.logging_level.label }}</td>
+                <td class="text-muted">{{ form.logging_level.data }}</td>
+            </tr>
+            <tr>
+                <td>{{ form.logging_file_retention.label }}</td>
+                <td class="text-muted">{{ form.logging_file_retention.data }}</td>
+            </tr>
+            <tr>
+                <td>{{ form.logging_file_size.label }}</td>
+                <td class="text-muted">{{ form.logging_file_size.data }}</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+{% endblock %}

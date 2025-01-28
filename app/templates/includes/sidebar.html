@@ -2,7 +2,7 @@
     <div class="sb-sidenav-menu">
         <div class="nav">
             <div class="sb-sidenav-menu-heading">Core</div>
-            <a class="ajax-link nav-link" href="{{ url_for('auth.dashboard') }}">
+            <a class="nav-link" href="{{ url_for('auth.dashboard') }}">
                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                 Dashboard
             </a>
@@ -20,20 +20,25 @@
                 </nav>
             </div>
             {% if current_user.role == 'admin' %}
-            <div class="sb-sidenav-menu-heading">General Settings</div>
+            <div class="sb-sidenav-menu-heading">Settings</div>
+            <a class="nav-link" href="{{ url_for('settings.settings') }}">
+                <div class="sb-nav-link-icon"><i class="fa-solid fa-gear" style="font-size: 0.90rem;"></i></div>
+                General Settings
+            </a>
             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseGeneralSttings"
                 aria-expanded="false" aria-controls="collapseGeneralSttings">
-                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                <div class="sb-nav-link-icon"><i class="fa-regular fa-message"></i></div>
                 Channels
                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
             <div class="collapse" id="collapseGeneralSttings" aria-labelledby="headingTwo"
                 data-bs-parent="#sidenavAccordion">
                 <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                    <a class="ajax-link nav-link" href="{{ url_for('general_settings.channel_settings') }}">Settings</a>
-                    <a class="ajax-link nav-link" href="{{ url_for('general_settings.notifications') }}">Notifications</a>
+                    <a class="nav-link" href="{{ url_for('settings.channel_settings') }}">Settings</a>
+                    <a class="nav-link" href="{{ url_for('settings.notifications') }}">Notifications</a>
                 </nav>
             </div>
+
             {% endif %}
         </div>
     </div>

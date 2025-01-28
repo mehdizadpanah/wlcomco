@@ -1,7 +1,8 @@
-from flask import Flask
+from flask import Flask,g
+from flask_login import current_user
 from flask_migrate import upgrade
 from sqlalchemy import inspect
-from .extensions import db, migrate, login_manager
+from .extensions import db, migrate, login_manager, Utilities
 from .routes import Blueprints
 from .models import User,Setting,Notification
 from .extensions import RedisClient
@@ -13,7 +14,6 @@ def create_app():
     app.config.from_object('config.Config')  # تنظیمات از فایل config
 
 
-
     # مقداردهی اولیه اکستنشن‌ها
     db.init_app(app)
     login_manager.init_app(app)
@@ -23,6 +23,8 @@ def create_app():
     for bluprint in Blueprints:
         app.register_blueprint(bluprint)
 
+
+    
     with app.app_context():
         migrate.init_app(app, db, directory="/var/www/wlcomco/migrations") # راه‌اندازی Flask-Migrate
 
@@ -33,12 +35,25 @@ def create_app():
             load_settings_to_cache()
         else:
             try:
-                upgrade()  # اجرای میگریت برای به‌روزرسانی دیتابیس
+                # upgrade()  # اجرای میگریت برای به‌روزرسانی دیتابیس
                 print("Database migrated successfully.")
 
             except Exception as e:
                  print(f"Migration failed: {e}")
                  raise
+
+    @app.before_request
+    def set_current_user():
+        g.current_user = getattr(current_user, 'name', 'Anonymous')
+
+
+
+    redisClient = RedisClient()
+    app.config['APP_NAME'] = redisClient.get('app_title')
+    @app.context_processor
+    def inject_app_name():
+        """اضافه کردن APP_NAME به تمام قالب‌ها"""
+        return {'app_name': app.config.get('APP_NAME', redisClient.get('app_title')) or 'No Name'}
 
 
     return app
@@ -52,14 +67,14 @@ def create_default_notification_templates():
             "content_type": "HTML",
             "description": "This email template is used to send a verification link to users after they register or update their email address.",
             "subject": "Verify Your Email Address",
-            "body": "<h1>Welcome {{ name }}</h1><p>Your account has been created successfully.</p>"
+            "body": Utilities.load_email_body_from_file('templates/notification_templates/email_verification.html')
         },{
             "name": "Reset Password",
             "send_via": "Email",
             "content_type": "HTML",
             "description": "Thid email template is used to send a reset password link to user",
             "subject": "Reset your password",
-            "body":"<h1>Welcome {{ name }}</h1><p>Please reset your password.</p>"
+            "body": Utilities.load_email_body_from_file('templates/notification_templates/reset_password.html')
         }]
     
     for template in default_templates:
@@ -88,14 +103,17 @@ def create_default_user(): # ساخت کاربر پیش فرض
 
 def create_default_settings(): # کنترل و ساخت تنظیمات دیفات
     default_settings = {
-        "app_name": "WLCOMCO",
         "smtp_host": "smtp.example.com",
         "smtp_port": "587",
         "smtp_from": "admin@example.com",
         "smtp_username": "admin@example.com",
         "smtp_password": "password123",
         "smtp_security": "SSL",
-        "registration_conf_email_temp": "<h1>Welcome to WLCOMCO!</h1>"  # نمونه قالب ایمیل
+        "registration_conf_email_temp": "<h1>Welcome to WLCOMCO!</h1>",  # نمونه قالب ایمیل,
+        "app_title": "WLCOMCO",
+        "logging_level":"WARNING",
+        "logging_file_retention":"3",
+        "logging_file_size":"10"
     }
 
     # خواندن همه تنظیمات موجود
@@ -116,10 +134,10 @@ def create_default_settings(): # کنترل و ساخت تنظیمات دیفا�
         print("All default settings already exist.")
 
 def load_settings_to_cache(): #ارسال همه تنظیمات به کش
-    resius_client = RedisClient()
-    resius_client.flush()
+    redis_client = RedisClient()
+    redis_client.flush()
     for s in Setting.query.all():
-        resius_client.set(s.name,s.value)
+        redis_client.set(s.name,s.value)
     print("Settings loaded to cache.")
 
 

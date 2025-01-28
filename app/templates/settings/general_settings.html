@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card shadow-lg border-0 rounded-lg mt-5">
+            <div class="card-header">
+                <h3 class="text-center font-weight-light my-4">SMTP Settings</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('settings.general_settings') }}" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <!-- Application title -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3 mb-md-0">
+                                {{ form.app_title(class="form-control", placeholder="SMTP Host") }}
+                                {{ form.app_title.label }}
+                                {% if form.app_title.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.app_title.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- Logging level -->
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3 mb-md-0">
+                                {{ form.logging_level(class="form-control", placeholder="SMTP From")}}
+                                {{ form.logging_level.label }}
+                                {% if form.logging_level.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.logging_level.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                         <!-- logging_file_retention -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3 mb-md-0">
+                                {{ form.logging_file_retention(class="form-control", placeholder="logging_file_retention") }}
+                                {{ form.logging_file_retention.label }}
+                                {% if form.logging_file_retention.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.logging_file_retention.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- logging_file_size -->
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3 mb-md-0">
+                                {{ form.logging_file_size(class="form-control", placeholder="SMTP From")}}
+                                {{ form.logging_file_size.label }}
+                                {% if form.logging_file_size.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.logging_file_size.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+
+            <!-- دکمه‌ها -->
+            <div class="mt-4 mb-0">
+                <div class="row gx-2 gy-2">
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-primary w-100">Save</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-secondary w-100"
+                            onclick="location.href='{{ url_for('settings.settings') }}'">
+                            Back
+                        </button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

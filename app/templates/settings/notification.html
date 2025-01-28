@@ -8,7 +8,7 @@
                 <h3 class="text-center font-weight-light my-4">Notification Settings</h3>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ url_for('general_settings.notification', notification_id=notification.id) }}" novalidate>
+                <form method="POST" action="{{ url_for('settings.notification', notification_name=notification.name) }}" novalidate>
                     {{ form.hidden_tag() }}
 
                     <!-- Notification Name -->
@@ -131,7 +131,7 @@
                             </div>
                             <div class="col-md-6">
                                 <button type="button" class="btn btn-secondary w-100"
-                                    onclick="location.href='{{ url_for('general_settings.notifications') }}'">
+                                    onclick="location.href='{{ url_for('settings.notifications') }}'">
                                     Back
                                 </button>
                             </div>

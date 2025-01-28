@@ -2,9 +2,6 @@ from flask_wtf import FlaskForm
 from wtforms import PasswordField,StringField,SubmitField
 from wtforms.validators import DataRequired,Length,EqualTo,Email,ValidationError
 from ...models import User
-from ...logging_config import get_logger
-
-logger = get_logger(__name__)
 
 class ChangePasswordForm(FlaskForm):
     email = StringField("Email",render_kw={'readonly': True},validators=[DataRequired(),Email()])

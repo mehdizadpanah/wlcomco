@@ -6,7 +6,7 @@
         "type": "debugpy",
         "request": "attach",
         "connect": {
-          "host": "wlcomco.comco.ir",
+          "host": "192.168.168.44",
           "port": 5678
         },
         "pathMappings": [
