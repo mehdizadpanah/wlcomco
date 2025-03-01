@@ -2,16 +2,20 @@ from flask_wtf import FlaskForm
 from wtforms import PasswordField,StringField,SubmitField
 from wtforms.validators import DataRequired,Length,EqualTo,Email,ValidationError
 from ...models import User
+from ..lazy_validator import LazyValidator
+from ..lazy_title import LazyTitle
+from ...services import get_translation
 
 class ChangePasswordForm(FlaskForm):
-    email = StringField("Email",render_kw={'readonly': True},validators=[DataRequired(),Email()])
+    email = StringField("Email",render_kw={'readonly': True})
 
-    old_password = PasswordField("Old Password",validators=[DataRequired()])
+    old_password = PasswordField(LazyTitle("Old Password"),validators=[LazyValidator(DataRequired(), 'required')])
 
-    password = PasswordField("Password",validators=[DataRequired(),Length(min=6)])
+    password = PasswordField(LazyTitle("Password"),validators=[LazyValidator(DataRequired(), 'required'),
+                                                    LazyValidator(Length(min=6), 'min_length')])
     
-    confirm_password = PasswordField ("Confirm password",validators=[DataRequired(),
-    EqualTo('password', message='Password must match')])
+    confirm_password = PasswordField (LazyTitle("Confirm password"),validators=[LazyValidator(DataRequired(), 'required'),
+                                                                     LazyValidator(EqualTo('password'),'password_match')])
 
     submit = SubmitField('change_password')
 
@@ -19,7 +23,7 @@ class ChangePasswordForm(FlaskForm):
         self.find_user()
         if self.user:
             if not self.user.check_password(old_password.data):
-                raise ValidationError ("Old password is not correct.")
+                raise ValidationError (get_translation('','Old password is not correct.'))
         
 
     def find_user(self):

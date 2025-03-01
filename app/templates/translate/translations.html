@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    {{ form.hidden_tag() }}
+    <h4>{{gettext('Translations')}}</h4>
+
+    <div class="d-flex justify-content-between mb-3">
+        <div>
+            <form method="POST" action="{{ url_for('translate.scan_for_translations') }}" style="display: inline;">
+                <button type="submit" class="btn btn-primary" title="Scan for new translation keys in the project">
+                    <i class="fas fa-sync-alt"></i> {{gettext('Scan')}}
+                </button>
+            </form>
+
+            <form method="POST" action="{{ url_for('translate.auto_translate') }}" style="display: inline;">
+                <button type="submit" class="btn btn-secondary ms-2" title="Automatically translate untranslated keys using Microsoft Translator">
+                    <i class="fas fa-language"></i> {{gettext('Auto Translate')}}
+                </button>
+            </form>
+        </div>
+
+        <input type="text" id="searchInput" class="form-control w-50" placeholder="{{gettext('Search translations')}}...">
+    </div>
+
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>{{ form.key.label }}</th>
+                <th>{{ form.source_type.label}}</th>
+                <th>{{ form.progress.label }}</th>
+                <th>{{gettext('Actions')}}</th>
+            </tr>
+        </thead>
+        <tbody id="translationTable">
+            {% for translation in translations %}
+            <tr>
+                {% set total_languages = languages | selectattr('code', 'ne', 'en') | list | length %}
+                <td>
+                    <a href="{{ url_for('translate.manage_translation', translation_id=translation.get_id_hex()) }}"
+                        class="text-decoration-underline text-primary" title="{{ translation.key }}">
+                        {{ translation.key[:80] }}{% if translation.key|length > 80 %}...{% endif %}
+                    </a>
+                    <div class="text-muted small mt-1">{{ translation.context[:80] }}{% if translation.context|length > 80 %}...{% endif %}</div>
+                </td>
+                <td class="align-middle">{{ translation.source_type or 'N/A' }}</td>
+                <td class="align-middle">
+                    {% set completed = translation.get_completed_languages() %}
+                    {% set progress_percentage = (completed / total_languages * 100) if total_languages > 0 else 0 %}
+
+                    <div class="progress" style="height: 20px; background-color: #e9ecef; border-radius: 10px; overflow: hidden; min-width: 120px;">
+                        <div class="progress-bar" role="progressbar"
+                             style="width: {{ progress_percentage if progress_percentage > 0 else 1 }}%; min-width: 20px; background-color: #4CAF50; font-weight: bold; color: white; display: flex; align-items: center; justify-content: center;"
+                             aria-valuenow="{{ completed }}" aria-valuemin="0"
+                             aria-valuemax="{{ total_languages if total_languages > 0 else 1 }}">
+                            {{ completed }}/{{ total_languages }}
+                        </div>
+                    </div>
+                </td>
+                <td class="align-middle">
+                    <form method="POST" action="{{ url_for('translate.delete_translation', translation_id=translation.get_id_hex()) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#translationTable tr');
+
+        rows.forEach(row => {
+            const key = row.cells[0].innerText.toLowerCase();
+            const sourceType = row.cells[1].innerText.toLowerCase();
+
+            if (key.includes(query) || sourceType.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+{% endblock %}

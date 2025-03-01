@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_login import current_user
-from sqlalchemy import Column, DateTime, Integer
+from sqlalchemy import Column, DateTime
 from ..extensions import UnitUtils
 from sqlalchemy.dialects.mysql import BINARY
 

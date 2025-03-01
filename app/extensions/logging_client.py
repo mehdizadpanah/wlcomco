@@ -1,6 +1,6 @@
 import logging
 from logging.handlers import RotatingFileHandler
-from . import RedisClient
+from .redis_client import RedisClient
 from flask import g
 
 

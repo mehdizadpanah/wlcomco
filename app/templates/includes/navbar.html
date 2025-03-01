@@ -4,7 +4,7 @@
             class="fas fa-bars"></i></button>
     <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
         <div class="input-group">
-            <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..."
+            <input class="form-control" type="text" placeholder="{{gettext('Search for')}}..." aria-label="Search for..."
                 aria-describedby="btnNavbarSearch" />
             <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
         </div>
@@ -16,13 +16,13 @@
                 <i class="fas fa-user fa-fw"></i>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li><a class="ajax-link dropdown-item" href="{{ url_for('auth.profile') }}">My Profile</a></li>
-                <li><a class="ajax-link dropdown-item" href="{{ url_for('auth.change_password') }}">Change Password</a>
+                <li><a class="ajax-link dropdown-item" href="{{ url_for('auth.profile') }}">{{ gettext('My Profile') }}</a></li>
+                <li><a class="ajax-link dropdown-item" href="{{ url_for('auth.change_password') }}">{{ gettext('Change Password') }}</a>
                 </li>
                 <li>
                     <hr class="dropdown-divider" />
                 </li>
-                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">{{ gettext('Logout') }}</a></li>
             </ul>
         </li>
     </ul>

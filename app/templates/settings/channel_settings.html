@@ -4,7 +4,7 @@
 <div class="container py-5">
     {{ form.hidden_tag() }}
     <div class="d-flex align-items-center mb-4">
-        <h6 class="mb-0 me-3">Email SMTP Information</h6>
+        <h4 class="mb-0 me-3">{{ gettext('SMTP Settings') }}</h4>
         <a href="{{ url_for('settings.smtp_settings') }}" class="link-secondary link-opacity-10-hover link-offcet-2">
             <i class="fa-solid fa-pen"></i>
         </a>
@@ -15,7 +15,7 @@
         <div class="col-6">{{form.smtp_host.data}}</div>
     </div>
     <div class="row py-2">
-        <div class="col-2 text-end text-muted" style="width: 170px;">{{form.smtp_host.label}}</div>
+        <div class="col-2 text-end text-muted" style="width: 170px;">{{form.smtp_port.label}}</div>
         <div class="col-6">{{form.smtp_port.data}}</div>
     </div>
     <div class="row py-2">

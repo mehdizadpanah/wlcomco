@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h4>{{ gettext('File Servers Management') }}</h4>
+
+    <!-- دکمه افزودن سرور فایل جدید -->
+    <div class="col text-end">
+        <a href="{{ url_for('settings.file_server') }}" class="btn btn-primary btn-sm me-4" title="Add New File Server">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+    
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>{{ gettext('Name') }}</th>
+                <th>{{ gettext('Host') }}</th>
+                <th>{{ gettext('Storage Type') }}</th>
+                <th>{{ gettext('Actions') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for server in file_servers %}
+            <tr>
+                <td>
+                    <a href="{{ url_for('settings.file_server', server_id=server.get_id_hex()) }}" 
+                       title="Edit / Details">
+                        {{ server.name }}
+                    </a>
+                </td>
+                <td>{{ server.host }}</td>
+                <td>{{ server.storage_type }}</td>
+                <td>
+                    <div class="dropdown">
+                        <a href="#" class="text-decoration-none text-dark" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- لینک ویرایش -->
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('settings.file_server', server_id=server.get_id_hex()) }}">
+                                    <i class="fas fa-edit"></i> {{ gettext('Edit') }}
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <!-- حذف سرور فایل -->
+                            <li>
+                                <form action="{{ url_for('settings.delete_file_server', server_id=server.get_id_hex()) }}"
+                                      method="POST" style="display:inline;"
+                                      onsubmit="return confirm('Are you sure you want to delete the file server \'{{ server.name }}\'?');">
+                                    {{ form.csrf_token }}
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-trash-alt"></i> {{ gettext('Delete') }}
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

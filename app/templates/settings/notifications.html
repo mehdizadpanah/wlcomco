@@ -2,20 +2,20 @@
 
 {% block content %}
 <div class="container py-5">
-    <h4>Notification Templates</h4>
+    <h4>{{ gettext('Notification Templates') }} </h4>
     <table class="table mt-4">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Actions</th>
+                <th>{{ get_translation('notification_templates.name', 'Name') }}</th>
+                <th>{{ get_translation('notification_templates.description', 'Description') }}</th>
+                <th>{{ gettext('Actions') }}</th>
             </tr>
         </thead>
         <tbody>
             {% for notification in notifications %}
             <tr>
-                <td>{{ notification.name }}</td>
-                <td>{{ notification.description }}</td>
+                <td>{{ get_translation('notification.' ~ notification.id ~ '.name', notification.name) }}</td>
+                <td>{{ get_translation('notification.' ~ notification.id ~ '.description', notification.description) }}</td>
                 <td>
                     <a href="{{ url_for('settings.notification', notification_name=notification.name) }}" class="link-secondary">
                         <i class="fa-solid fa-pen"></i>

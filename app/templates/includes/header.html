@@ -1,12 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ active_language }}" dir="{{ direction }}">
 
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
-    <link href="{{ url_for('static', filename='custom/css/styles.css') }}" rel="stylesheet" />
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    {% if direction == 'rtl' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.rtl.min.css') }}">
+    {% else %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    {% endif %}
+    {% if direction == 'rtl' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom/css/styles.rtl.css') }}?v=1">
+    {% else %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom/css/styles.css') }}?v=1">
+    {% endif %}
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <title>{% block title %}{{app_name}}{% endblock %}</title>
 </head>

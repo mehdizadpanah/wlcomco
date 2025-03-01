@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h4>{{ gettext('Cache Servers Management') }}</h4>
+
+    <!-- دکمه افزودن سرور کش جدید -->
+    <div class="col text-end">
+        <a href="{{ url_for('settings.cache_server') }}" class="btn btn-primary btn-sm me-4" title="Add New Cache Server">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+    
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>{{ get_translation('cache_server.name', 'Name') }}</th>
+                <th>{{ get_translation('cache_server.host', 'Host') }}</th>
+                <th>{{ get_translation('cache_server.description', 'Description') }}</th>
+
+                <th>{{ gettext('Actions') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for server in cache_servers %}
+            <tr>
+                <td>
+                    <!-- لینک به صفحه جزئیات/ویرایش سرور -->
+                    <a href="{{ url_for('settings.cache_server', server_id=server.get_id_hex()) }}" 
+                       title="Edit / Details">
+                        {{ server.name }}
+                    </a>
+                </td>
+                <td>{{ server.host }}</td>
+                <td>{{server.description}}</td>
+                <td>
+                    <div class="dropdown">
+                        <a href="#" class="text-decoration-none text-dark" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- حذف سرور کش -->
+                            <li>
+                                <form action="{{ url_for('settings.delete_cache_server', server_id=server.get_id_hex()) }}"
+                                      method="POST" style="display:inline;"
+                                      onsubmit="return confirm('Are you sure you want to delete the cache server \'{{ server.name }}\'?');">
+                                      {{ form.csrf_token }}
+                                      <button type="submit" class="dropdown-item text-danger">
+                                        {{ gettext('Delete') }}
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

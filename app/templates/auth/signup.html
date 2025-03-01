@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Sign Up</title>
+    <title>{{ gettext('Sign Up') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='custom/css/styles.css') }}">
 
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -23,10 +23,11 @@
                         <div class="col-lg-7">
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
                                 <div class="card-header">
-                                    <h3 class="text-center font-weight-light my-4">Create Account</h3>
+                                    <h3 class="text-center font-weight-light my-4">{{ gettext('Create Account') }}</h3>
                                 </div>
                                 <div class="card-body">
-                                    <form id="signup-form" method="POST" action="{{ url_for('auth.signup') }}" novalidate>
+                                    <form id="signup-form" method="POST" action="{{ url_for('auth.signup') }}"
+                                        novalidate>
                                         {{ form.hidden_tag() }} <!-- برای CSRF -->
                                         <div class="row mb-3">
                                             <div class="col-md-6">
@@ -91,19 +92,23 @@
                                         <div class="mt-4 mb-0">
                                             <div class="row">
                                                 <div class="col-md-6"><button type="submit"
-                                                        class="btn btn-primary w-100">Create Account</button>
+                                                        class="btn btn-primary w-100">{{ gettext('Create Account')
+                                                        }}</button>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <a href="{{ url_for('auth.dashboard') }}"
-                                                        class="btn btn-secondary w-100">Cancel</a>
+                                                        class="btn btn-secondary w-100">{{ gettext('Cancel') }}</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="card-footer text-center py-3">
-                                    <div class="small"><a href="{{ url_for('auth.login') }}">Have an account? Go to
-                                            login</a></div>
+                                    <div class="small">
+                                        <a href="{{ url_for('auth.login') }}">{{ gettext('Have an account? Go to login')
+                                            }}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -117,9 +122,9 @@
                     <div class="d-flex align-items-center justify-content-between small">
                         <div class="text-muted">Copyright &copy; COMCO 2024</div>
                         <div>
-                            <a href="#">Privacy Policy</a>
+                            <a href="#">{{ gettext('Privacy Policy') }}</a>
                             &middot;
-                            <a href="#">Terms &amp; Conditions</a>
+                            <a href="#">{{ gettext('Terms & Conditions') }}</a>
                         </div>
                     </div>
                 </div>

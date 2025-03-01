@@ -31,6 +31,12 @@ class User(UserMixin, db.Model):
     is_email_verified = db.Column(db.Boolean, default=False)
     email_verification_token = db.Column(db.String(255), nullable=True)
     password_reset_token = db.Column(db.String(255), nullable=True)
+        # فیلد جدید برای تعیین زبان کاربر
+    language_id = db.Column(BINARY(16), db.ForeignKey('language.id'), nullable=True)
+
+    # تعریف رابطه برای دسترسی راحت‌تر به اطلاعات زبان
+    language = db.relationship('Language', backref='user', lazy=True)
+
 
     def get_id(self):
         try:

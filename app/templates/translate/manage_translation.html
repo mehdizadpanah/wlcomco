@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-5">{{gettext('Edit Translation')}}</h2>
+    
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5>{{gettext('Original Text')}}</h5>
+        <button class="btn btn-sm btn-outline-secondary" onclick="copyToClipboard()">
+            Copy
+        </button>
+    </div>
+    <div class="border rounded p-3 bg-light" style="max-height: 200px; overflow-y: auto; display: flex; align-items: flex-start;">
+        {{ translation.key.strip() }}
+    </div>
+
+    <div class="text-muted small mt-1">
+        {{ translation.context }}
+    </div>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="my-4"></div> <!-- فاصله بین متن اصلی و بخش ترجمه‌ها -->
+
+        {% for language in languages if language.code != 'en' %}
+        <div class="mb-4">
+            <label>{{ language.name }} ({{ language.code }})</label>
+            <textarea name="value_{{ language.id }}" class="form-control border rounded p-3 bg-light" 
+                      style="max-height: 150px; overflow-y: auto; resize: vertical;" rows="4"
+                      placeholder="Enter translation for {{ language.name }}">{{ translation.get_value_for_language(language.id) or '' }}</textarea>
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">{{gettext('Save')}}</button>
+        <a href="{{ url_for('translate.list_translations') }}" class="btn btn-secondary">{{ gettext('Back to List') }}</a>
+    </form>
+</div>
+
+<script>
+    function copyToClipboard() {
+        const text = document.querySelector('.bg-light').innerText.trim();
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Text copied to clipboard!');
+        }, (err) => {
+            console.error('Failed to copy text: ', err);
+        });
+    }
+</script>
+{% endblock %}

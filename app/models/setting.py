@@ -50,8 +50,7 @@ class Setting(db.Model):
             if value == '******':
                 logger.info("No changes detected in settings.")
                 return setting
-            encryption = Encryption()
-            value = encryption.encrypt(value)
+            value = Encryption.encrypt(value)
             logger.info(f"Password for setting '{name}' encrypted.")
 
         if setting:
@@ -91,8 +90,7 @@ class Setting(db.Model):
                     if value == '******':
                         logger.info("No changes detected in settings.")
                         continue
-                    encryption = Encryption()
-                    value = encryption.encrypt(value)
+                    value = Encryption.encrypt(value)
                     logger.info(f"Password for setting '{name}' encrypted.")
 
                 setting = cls.query.filter_by(name=name).first()

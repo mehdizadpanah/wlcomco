@@ -4,6 +4,9 @@ from email.mime.multipart import MIMEMultipart
 from .encryption import Encryption
 from .redis_client import RedisClient
 from flask import flash
+from ..extensions.logging_client import get_logger
+
+logger = get_logger("extentions")
 
 class EmailSender:
     def __init__(self):
@@ -11,13 +14,12 @@ class EmailSender:
         مقداردهی اولیه و اتصال به Redis برای دریافت تنظیمات.
         """
         redis_client = RedisClient()
-        enctyption = Encryption()
 
 
         self.smtp_host = str(redis_client.get("smtp_host"))
         self.smtp_port = int(redis_client.get("smtp_port"))
         self.smtp_username = redis_client.get("smtp_username")
-        self.smtp_password = enctyption.decrypt(redis_client.get("smtp_password"))
+        self.smtp_password = Encryption.decrypt(redis_client.get("smtp_password"))
         self.smtp_from = redis_client.get("smtp_from")
         self.smtp_security = redis_client.get("smtp_security").upper()
 
@@ -48,15 +50,18 @@ class EmailSender:
             # ورود به SMTP
             if self.smtp_username and self.smtp_password:
                 server.login(self.smtp_username, self.smtp_password)
+                logger.info("Login to SMTP server successful.")
+
 
             # ارسال ایمیل
             server.sendmail(self.smtp_from, recipients, msg.as_string())
+            logger.info("Email sent successfully.")
             server.quit()
 
-            print("Email sent successfully.")
         except Exception as e:
-            print(f"Error sending email: {e}")
-            flash(f"Error sending email: {e}", "error")
+            logger.error(f"Error sending email: {e}")
+            raise e
+
 
 
 

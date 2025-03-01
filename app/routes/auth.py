@@ -7,6 +7,7 @@ from ..extensions import login_manager,EmailSender ,RedisClient,get_logger,UnitU
 from app.forms.auth_forms import LoginForm,SignupForm,ProfileForm,ChangePasswordForm,ResendConfirmationForm
 from app.forms.auth_forms import SetNewPasswordForm,ResetPasswordForm
 from string import Template
+from ..services import delete_language_cookies
 
 # تعریف Blueprint
 auth_bp = Blueprint('auth', __name__)
@@ -267,29 +268,32 @@ def resend_confirmation():
 @auth_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    """
-    متد ویرایش پروفایل کاربر
-    """
     logger.info(f'Profile endpoint accessed by user: {current_user.name}')
     form = ProfileForm()
-    
+
     try:
         if request.method == 'POST':
             logger.info(f"POST request received for profile update by user: {current_user.name}")
             if form.validate_on_submit():
+                # حذف تغییر مستقیم زبان در اینجا؛ تغییر فقط در save_user_fields انجام شود
                 if save_user_fields(current_user, form, ['name', 'email']):
-                    logger.info(f"Profile updated successfully for user: {current_user.name}")
                     flash("Profile updated successfully!", "success")
+                    delete_language_cookies()
                     return redirect(url_for('auth.dashboard'))
+
             if form.errors:
                 logger.warning(f"Form validation errors: {form.errors}")
             return render_template('auth/profile.html', form=form)
 
-        # مقداردهی اولیه به فرم
+        # مقداردهی اولیه برای فیلدهای فرم
         form.name.data = current_user.name
         form.email.data = current_user.email
-        logger.info(f"Rendering profile page for user: {current_user.name}")
+        if current_user.language_id:
+            form.language.data = UnitUtils.bytes_to_hex(current_user.language_id)
+        else:
+            form.language.data = ''  # زبان پیش‌فرض سیستم
 
+        logger.info(f"Rendering profile page for user: {current_user.name}")
         return render_template('auth/profile.html', form=form)
 
     except Exception as e:
@@ -551,6 +555,7 @@ def logout():
     try:
         # خروج کاربر
         logout_user()
+        delete_language_cookies()
         logger.info("User session cleared successfully.")
         flash("You have been logged out.", "info")
 
@@ -565,11 +570,20 @@ def logout():
 
 def save_user_fields(user, form, fields):
     """
-    ذخیره یا به‌روزرسانی فیلدهای مشخص‌شده برای کاربر با استفاده از متد مدل.
+    ذخیره یا به‌روزرسانی فیلدهای مشخص‌شده برای کاربر به همراه مدیریت تغییرات زبان.
     """
     try:
+        # دریافت فیلدهای مورد نظر از فرم (مثلاً name و email)
         updates = {field: getattr(form, field).data for field in fields if hasattr(user, field) and hasattr(form, field)}
-        if user.save_fields(updates):  # استفاده از متد `save_fields` در مدل
+
+        # مدیریت به‌روز‌رسانی زبان در یک مکان
+        if hasattr(user, 'language_id'):
+            if form.language.data:
+                updates['language_id'] = UnitUtils.hex_to_bytes(form.language.data)
+            else:
+                updates['language_id'] = None
+
+        if user.save_fields(updates):
             logger.info(f"User {user.email} updated successfully.")
             return True
         else:

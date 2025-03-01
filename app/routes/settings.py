@@ -1,8 +1,7 @@
 from ..forms.settings_forms import ChannelSettingsForm,NotificationForm,SMTPSettingsForm,SettingsForm
-from ..forms.settings_forms import GeneralSettingsForm
-import os
-from ..models import Setting,Notification,db
-from flask import Blueprint, render_template, redirect, url_for, session, request, flash
+from ..forms.settings_forms import GeneralSettingsForm,CacheServerForm,FileServerForm
+from ..models import Setting,Notification,db,CacheServer,FileServer
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required
 from ..extensions import get_logger,ModelUtils
 
@@ -18,8 +17,15 @@ def inject_parent_menu():
         return {'parent_menu': 'channel_settings'}
     elif '/notification/' in request.path:
         return {'parent_menu': 'notifications'}
-    return {'parent_menu': None}  # پیش‌فرض: منویی فعال نباشد
+    elif '/general_settings' in request.path:
+        return {'parent_menu': 'settings'}
+    elif '/cache_server' in request.path:
+        return {'parent_menu': 'cache_server'}
+    elif '/file_server' in request.path:
+        return {'parent_menu': 'file_server'}
 
+
+    return {'parent_menu': None}  # پیش‌فرض: منویی فعال نباشد
 
 @settings_bp.route('/settings', methods=['GET'])
 @login_required
@@ -42,7 +48,6 @@ def settings():
         logger.critical(f"Unexpected error in settings route: {str(e)}")
         flash("An unexpected error occurred while loading settings. Please try again later.", "danger")
         return redirect(url_for('settings.settings'))
-
 
 @settings_bp.route('/general_settings', methods=['GET', 'POST'])
 @login_required
@@ -82,7 +87,6 @@ def general_settings():
         flash("An unexpected error occurred while processing general settings. Please try again later.", "danger")
         return redirect(url_for('settings.settings'))
 
-
 @settings_bp.route('/channel_settings', methods=['GET'])
 @login_required
 def channel_settings():
@@ -106,7 +110,6 @@ def channel_settings():
         logger.critical(f"Unexpected error in channel_settings (GET): {str(e)}")
         flash("An unexpected error occurred while loading channel settings. Please try again later.", "danger")
         return redirect(url_for('settings.settings'))
-
 
 @settings_bp.route('/smtp_settings', methods=['GET', 'POST'])
 @login_required
@@ -147,7 +150,6 @@ def smtp_settings():
         flash("An unexpected error occurred. Please try again later.", "danger")
         return redirect(url_for('settings.channel_settings'))
 
-
 # لیست نوتیفیکیشن‌ها
 @settings_bp.route('/notifications', methods=['GET'])
 @login_required
@@ -170,7 +172,6 @@ def notifications():
         logger.critical(f"Unexpected error in notifications: {str(e)}")
         flash("An unexpected error occurred. Please try again later.", "danger")
         return redirect(url_for('settings.settings'))
-
 
 @settings_bp.route('/notification/<notification_name>', methods=['GET', 'POST'])
 @login_required
@@ -221,6 +222,207 @@ def notification(notification_name):
         logger.critical(f"Unexpected error in notification route for ID {notification_name}: {str(e)}")
         flash("An unexpected error occurred. Please try again later.", "danger")
         return redirect(url_for('settings.notifications'))
+
+@settings_bp.route('/cache_servers', methods=['GET'])
+@login_required
+def cache_servers():
+    """
+    نمایش فهرست سرورهای کش
+    """
+    form = CacheServerForm()
+    logger.info("Cache servers list endpoint accessed.")
+    try:
+        servers = CacheServer.get_all()  # متد کمکی در مدل برای واکشی همه رکوردها
+        return render_template('settings/cache_servers.html', cache_servers=servers,form=form)
+    except Exception as e:
+        logger.critical(f"Unexpected error in cache_servers route: {str(e)}")
+        flash("An unexpected error occurred while loading cache servers list. Please try again later.", "danger")
+        return redirect(url_for('settings.settings'))
+
+@settings_bp.route('/cache_server', methods=['GET', 'POST'])
+@settings_bp.route('/cache_server/<string:server_id>', methods=['GET', 'POST'])
+@login_required
+def cache_server(server_id=None):
+    """
+    ایجاد یا ویرایش یک سرور کش
+    """
+    logger.info("Cache server endpoint accessed.")
+    try:
+        if server_id:
+            logger.info(f"Editing cache server with ID: {server_id}")
+            server = CacheServer.get_by_id(server_id)
+            if not server:
+                logger.warning(f"Cache server not found for ID: {server_id}")
+                flash("Cache server not found.", "warning")
+                return redirect(url_for('settings.cache_servers'))
+            form = CacheServerForm(obj=server)
+            if request.method == 'GET':
+                form.password.data = "******" if server.password else ""
+        else:
+            logger.info("Creating a new cache server.")
+            server = CacheServer()
+            form = CacheServerForm()
+
+        if form.validate_on_submit():
+            logger.info("Form validated successfully.")
+            form.populate_obj(server)
+
+            if server.save():
+                flash("Cache server saved successfully.", "success")
+                logger.info(f"Cache server {'updated' if server_id else 'added'} successfully.")
+                return redirect(url_for('settings.cache_servers'))
+            else:
+                logger.error("Failed to save cache server changes.")
+                flash("Failed to save cache server changes. Please try again.", "danger")
+        else:
+            if request.method == 'POST':
+                logger.warning(f"Form validation errors: {form.errors}")
+
+        # رندر تمپلیت جزئیات سرور کش
+        return render_template('settings/cache_server.html', form=form, cache_server_id=server_id)
+
+    except Exception as e:
+        logger.critical(f"Unexpected error in cache_server route for ID {server_id}: {str(e)}")
+        flash("An unexpected error occurred. Please try again later.", "danger")
+        return redirect(url_for('settings.cache_servers'))
+
+
+@settings_bp.route('/cache_server/<string:server_id>/delete', methods=['POST'])
+@login_required
+def delete_cache_server(server_id):
+    """
+    حذف یک سرور کش
+    """
+    logger.info(f"Delete cache server endpoint accessed for ID: {server_id}")
+    try:
+        server = CacheServer.get_by_id(server_id)
+        if not server:
+            logger.warning(f"Cache server not found for ID: {server_id}")
+            flash("Cache server not found.", "warning")
+            return redirect(url_for('settings.cache_servers'))
+
+        if server.delete():
+            flash("Cache server deleted successfully.", "success")
+            logger.info(f"Cache server {server_id} deleted successfully.")
+        else:
+            flash("Failed to delete cache server.", "danger")
+            logger.error(f"Failed to delete cache server {server_id} from the database.")
+
+        return redirect(url_for('settings.cache_servers'))
+
+    except Exception as e:
+        logger.critical(f"Unexpected error in delete_cache_server route: {str(e)}")
+        flash("An unexpected error occurred while deleting cache server. Please try again later.", "danger")
+        return redirect(url_for('settings.cache_servers'))
+
+@settings_bp.route('/file_servers', methods=['GET'])
+@login_required
+def file_servers():
+    """
+    نمایش لیست سرورهای فایل
+    """
+    logger.info("Accessing file servers list.")
+    form = FileServerForm()
+    try:
+        servers = FileServer.get_all()
+        return render_template('settings/file_servers.html', file_servers=servers, form=form)
+    except Exception as e:
+        logger.critical(f"Unexpected error in file_servers route: {str(e)}")
+        flash("An unexpected error occurred while loading file servers list. Please try again later.", "danger")
+        return redirect(url_for('settings.settings'))
+
+
+@settings_bp.route('/file_server', methods=['GET', 'POST'])
+@settings_bp.route('/file_server/<string:server_id>', methods=['GET', 'POST'])
+@login_required
+def file_server(server_id=None):
+    """
+    ایجاد یا ویرایش یک سرور فایل
+    """
+    try:
+        if server_id:
+            logger.info(f"Editing file server with ID: {server_id}")
+            server = FileServer.get_by_id(server_id)
+            if not server:
+                logger.warning(f"File server not found for ID: {server_id}")
+                flash("File server not found.", "warning")
+                return redirect(url_for('settings.file_servers'))
+            form = FileServerForm(obj=server)
+            if request.method == 'GET':
+                form.password.data = "******" if server.password else ""
+        else:
+            logger.info("Creating a new file server.")
+            server = FileServer()
+            form = FileServerForm()
+
+        if form.validate_on_submit():
+            logger.info("Form validated successfully.")
+            form.populate_obj(server)
+
+            if server.save():
+                flash("File server saved successfully.", "success")
+                logger.info(f"File server {'updated' if server_id else 'added'} successfully.")
+                return redirect(url_for('settings.file_servers'))
+            else:
+                logger.error("Failed to save file server changes.")
+                flash("Failed to save file server changes. Please try again.", "danger")
+        else:
+            if request.method == 'POST':
+                if form.validate_on_submit():
+                    logger.info("Form validated successfully.")
+
+                    # به‌روزرسانی اطلاعات شیء مدل بر اساس ورودی‌های فرم
+                    form.populate_obj(server)
+
+                    # ذخیره در دیتابیس
+                    if server.save():
+                        flash("File server saved successfully.", "success")
+                        logger.info(f"File server {'updated' if server_id else 'added'} successfully.")
+                        return redirect(url_for('settings.file_servers'))
+                    else:
+                        logger.error("Failed to save file server changes.")
+                        flash("Failed to save file server changes. Please try again.", "danger")
+
+                else:
+                    logger.warning(f"Form validation errors: {form.errors}")
+
+        return render_template('settings/file_server.html', form=form, server_id=server_id)
+
+    except Exception as e:
+        logger.critical(f"Unexpected error in file_server route for ID {server_id}: {str(e)}")
+        flash("An unexpected error occurred. Please try again later.", "danger")
+        return redirect(url_for('settings.file_servers'))
+
+
+@settings_bp.route('/file_server/<string:server_id>/delete', methods=['POST'])
+@login_required
+def delete_file_server(server_id):
+    """
+    حذف یک سرور فایل
+    """
+    logger.info(f"Delete file server endpoint accessed for ID: {server_id}")
+    try:
+        server = FileServer.get_by_id(server_id)
+        if not server:
+            logger.warning(f"File server not found for ID: {server_id}")
+            flash("File server not found.", "warning")
+            return redirect(url_for('settings.file_servers'))
+
+        if server.delete():
+            flash("File server deleted successfully.", "success")
+            logger.info(f"File server {server_id} deleted successfully.")
+        else:
+            flash("Failed to delete file server.", "danger")
+            logger.error(f"Failed to delete file server {server_id} from the database.")
+
+        return redirect(url_for('settings.file_servers'))
+
+    except Exception as e:
+        logger.critical(f"Unexpected error in delete_file_server route: {str(e)}")
+        flash("An unexpected error occurred while deleting file server. Please try again later.", "danger")
+        return redirect(url_for('settings.file_servers'))
+
+
 
 
 def load_general_settings(form):
@@ -283,3 +485,4 @@ def save_smtp_settings(form):
     else:
         logger.error("Failed to update SMTP settings.")
         return False
+

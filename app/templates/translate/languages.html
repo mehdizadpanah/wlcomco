@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h4>{{ gettext('Language Management') }}</h4>
+    <div class="col text-end">
+        <a href="{{ url_for('translate.language') }}" class="btn btn-primary btn-sm me-4" title="Add New Language">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>{{ form.code.label }}</th>
+                <th>{{ form.name.label }}</th>
+                <th>{{ form.flag_path.label }}</th>
+                <th>{{ form.is_active.label }}</th>
+                <th>{{ form.default.label }}</th>
+                <th>{{ gettext('Actions') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for language in languages %}
+            <tr>
+                <td>
+                    {% if language.code == 'en' %}
+                    <a class="text-decoration-none text-dark" title="Default Language">
+                        {{ language.code }}
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('translate.language', language_id=language.get_id_hex()) }}" title="Edit Language">
+                        {{ language.code }}
+                    </a>
+                    {% endif %}
+                </td>
+                <td>{{ language.name }}</td>
+                <td>
+                    {% if language.flag %}
+                    <img src="{{ url_for('static', filename=language.flag) }}" alt="{{ language.name }} Flag" width="30">
+                    {% else %}
+                    No Flag
+                    {% endif %}
+                </td>
+                <td>
+                    {% if language.is_active %}
+                    <span class="badge bg-success">{{gettext('Active')}}</span>
+                    {% else %}
+                    <span class="badge bg-danger">{{gettext('Inactive')}}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if language.default %}
+                    <span class="badge bg-primary">{{gettext('Default')}}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="dropdown">
+                        <a href="#" class="text-decoration-none text-dark" data-bs-toggle="dropdown">...</a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <form action="{{ url_for('translate.set_default_language', language_id=language.get_id_hex()) }}"
+                                    method="POST" style="display:inline;">
+                                    <button type="submit" class="dropdown-item" {% if language.default %} disabled {% endif %}>
+                                        Set as Default
+                                    </button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="{{ url_for('translate.delete_language', language_id=language.get_id_hex()) }}"
+                                    method="POST" style="display:inline;"
+                                    onsubmit="return confirm('Are you sure you want to delete the language &quot;{{ language.name }}&quot; and all its translations?');">
+                                    <button type="submit" class="dropdown-item text-danger" {% if language.code=='en' %} disabled {% endif %}>
+                                        Delete
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

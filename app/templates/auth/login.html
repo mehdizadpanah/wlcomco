@@ -23,7 +23,7 @@
                         <div class="col-lg-5">
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
                                 <div class="card-header">
-                                    <h3 class="text-center font-weight-light my-4">Login</h3>
+                                    <h3 class="text-center font-weight-light my-4">{{ gettext('Login') }}</h3>
                                 </div>
                                 <div class="card-body">
                                     <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
@@ -54,31 +54,32 @@
                                         </div>
                                         <div class="form-check mb-3">
                                             {{ form.remember_me(class="form-check-input", id="inputRememberPassword") }}
-                                            <label class="form-check-label" for="inputRememberPassword">
-                                                {{ form.remember_me.label.text }}
-                                            </label>
+                                            {{form.remember_me.label}}
                                         </div>
                                         <div>
-                                            <a class="small" href="{{url_for('auth.reset_password')}}">Forgot
-                                                Password?</a>
+                                            <a class="small" href="{{url_for('auth.reset_password')}}">{{
+                                                gettext('Forgot Password?') }}</a>
                                         </div>
 
                                         <div class="d-grid mt-3">
-                                            <button type="submit" class="btn btn-primary">Login</button>
+                                            <button type="submit" class="btn btn-primary">{{ gettext('Login')
+                                                }}</button>
                                         </div>
 
                                         <div class="d-grid mt-3">
                                             <a href="{{ url_for('auth.login_google') }}"
                                                 class="btn btn-danger btn-block">
                                                 <i class="fa-brands fa-google"></i>
-                                                Login with Google
+                                                {{ gettext('Login with Google') }}
                                             </a>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="card-footer text-center py-3">
-                                    <div class="small mb-3"><a href="{{ url_for('auth.signup') }}">Need an account? Sign
-                                            up!</a></div>
+                                    <div class="small mb-3">
+                                        <a href="{{ url_for('auth.signup') }}">{{ gettext('Need an account? Signup!') }}
+                                        </a>
+                                    </div>
                                 </div>
 
                             </div>
@@ -93,9 +94,9 @@
                     <div class="d-flex align-items-center justify-content-between small">
                         <div class="text-muted">Copyright &copy; COMCO 2024</div>
                         <div>
-                            <a href="#">Privacy Policy</a>
+                            <a href="#">{{ gettext('Privacy Policy') }}</a>
                             &middot;
-                            <a href="#">Terms &amp; Conditions</a>
+                            <a href="#">{{ gettext('Terms & Conditions') }}</a>
                         </div>
                     </div>
                 </div>
@@ -103,6 +104,6 @@
         </div>
     </div>
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    < </body>
+</body>
 
 </html>

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card shadow-lg border-0 rounded-lg mt-5">
+            <div class="card-header">
+                <h3 class="text-center font-weight-light my-4">{{ gettext('Cache Server Details') }}</h3>
+            </div>
+            <div class="card-body">
+                <!-- 
+                    - اگر دارید فرم را برای ویرایش نمایش می‌دهید، مقدار server_id را در URL قرار دهید
+                    - در سناریو افزودن، می‌توانید از متدی بدون پارامتر استفاده کنید
+                -->
+                <form method="POST"
+                    action="{{ url_for('settings.cache_server', server_id=cache_server_id|default('')) }}" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <!-- فیلد ID پنهان (در صورت نیاز) -->
+                    {{ form.id }}
+
+                    <!-- نام سرور -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="form-floating mb-3 mb-md-0">
+                                {{ form.name(class="form-control", placeholder="Server Name") }}
+                                {{ form.name.label }}
+                                {% if form.name.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.name.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Host (IP) و Port -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3 mb-md-0">
+                                {{ form.host(class="form-control", placeholder="Host/IP") }}
+                                {{ form.host.label }}
+                                {% if form.host.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.host.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3 mb-md-0">
+                                {{ form.port(class="form-control", placeholder="Port") }}
+                                {{ form.port.label }}
+                                {% if form.port.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.port.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- پسورد و DB Index -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3 mb-md-0">
+                                {{ form.password(class="form-control", placeholder="Password") }}
+                                {{ form.password.label }}
+                                {% if form.password.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.password.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3 mb-md-0">
+                                {{ form.db_index(class="form-control", placeholder="DB Index") }}
+                                {{ form.db_index.label }}
+                                {% if form.db_index.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.db_index.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                {{ form.description(class="form-control", placeholder="Description",style="height: auto;") }}
+                                {{ form.description.label }}
+                                {% if form.description.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.description.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- دکمه‌های ذخیره و بازگشت -->
+                    <div class="mt-4 mb-0">
+                        <div class="row gx-2 gy-2">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary w-100">{{ gettext('Save') }}</button>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- در صورت نیاز مسیر بازگشت را اصلاح کنید -->
+                                <button type="button" class="btn btn-secondary w-100"
+                                    onclick="location.href='{{ url_for('settings.cache_servers')}}'">
+                                    {{ gettext('Back') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

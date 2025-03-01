@@ -56,6 +56,13 @@ requirepass StrongPassword123
 sudo systemctl start redis
 sudo systemctl enable redis
 
+--------------------------------
+#install node.js
+curl -fsSL https://rpm.nodesource.com/setup_lts.x | sudo bash -
+sudo dnf install -y nodejs
+npm install -g rtlcss
+
+
 ---------------------------------
 sudo nano /etc/httpd/conf.d/wlcomco.conf
 
@@ -117,3 +124,6 @@ PYTHONPATH=/var/www/wlcomco python -m debugpy --listen 0.0.0.0:5678 run.py
 ---------------------------------------------
 flask db migrate -m "ChangeName"
 flask db upgrade
+----------------------------------------------
+# convert css to rtl
+rtlcss /var/www/wlcomco/app/static/custom/css/styles.css  /var/www/wlcomco/app/static/custom/css/styles.rtl.css

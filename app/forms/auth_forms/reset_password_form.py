@@ -2,6 +2,12 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired, Email
+from ..lazy_validator import LazyValidator
+from ..lazy_title import LazyTitle
+
 
 class ResetPasswordForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField(LazyTitle('Email'), validators=[LazyValidator(DataRequired(),'required'),
+                                             LazyValidator(Email(),'email')])
+
+    

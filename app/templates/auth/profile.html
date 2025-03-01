@@ -5,7 +5,7 @@
     <div class="col-lg-7">
         <div class="card shadow-lg border-0 rounded-lg mt-5">
             <div class="card-header">
-                <h3 class="text-center font-weight-light my-4">Profile</h3>
+                <h3 class="text-center font-weight-light my-4">{{ gettext('Profile') }}</h3>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ url_for('auth.profile') }}" novalidate 
@@ -15,7 +15,7 @@
                         <div class="col-md-6">
                             <div class="form-floating mb-3 mb-md-0">
                                 {{ form.name(class="form-control", placeholder="Your Name") }}
-                                {{ form.name.label }}
+                                {{form.name.label}}
                                 {% if form.name.errors %}
                                 <div class="text-danger mt-1">
                                     {% for error in form.name.errors %}
@@ -28,7 +28,7 @@
                     </div>
                     <div class="form-floating mb-3">
                         {{ form.email(class="form-control", placeholder="Enter Email") }}
-                        {{ form.email.label }}
+                        {{form.email.label}}
                         {% if form.email.errors %}
                         <div class="text-danger mt-1">
                             {% for error in form.email.errors %}
@@ -36,16 +36,26 @@
                             {% endfor %}
                         </div>
                         {% endif %}
-
+                    </div>
+                    <div class="form-floating mb-3">
+                        {{ form.language(class="form-select", placeholder="Select Language") }}
+                        {{form.language.label}}
+                        {% if form.language.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.language.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </div>
                     <div class="mt-4 mb-0">
                         <div class="row gx-2 gy-2">
                             <div class="col-md-6">
-                                <button type="submit" class="btn btn-primary w-100">Save</button>
+                                <button type="submit" class="btn btn-primary w-100">{{ gettext('Save') }}</button>
                             </div>
                             <div class="col-md-6">
                                 <a href="{{ url_for('auth.dashboard') }}"
-                                    class="btn btn-secondary w-100 ajax-link">Cancel</a>
+                                    class="btn btn-secondary w-100 ajax-link">{{ gettext('Cancel') }}</a>
                             </div>
                         </div>
                     </div>

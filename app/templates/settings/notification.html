@@ -5,27 +5,21 @@
     <div class="col-lg-7">
         <div class="card shadow-lg border-0 rounded-lg mt-5">
             <div class="card-header">
-                <h3 class="text-center font-weight-light my-4">Notification Settings</h3>
+                <h4 class="text-center font-weight-light my-3">{{ gettext('Notification Settings') }}</h4>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ url_for('settings.notification', notification_name=notification.name) }}" novalidate>
+                <form method="POST" action="{{ url_for('settings.notification', notification_name=notification.name) }}"
+                    novalidate>
                     {{ form.hidden_tag() }}
 
                     <!-- Notification Name -->
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <div class="form-floating mb-3 mb-md-0">
-                                {{ form.name(class="form-control", placeholder="Notification Name", disabled = True) }}
-                                {{ form.name.label }}
+                                <input type="text" class="form-control"
+                                    value="{{ get_translation('notification.name', form.name.data) }}" disabled>
+                                <label>{{ get_translation('form.NotificationForm.name', form.name.label.text) }}</label>
                                 <input type="hidden" name="name" value="{{ form.name.data }}">
-
-                                {% if form.name.errors %}
-                                <div class="text-danger mt-1">
-                                    {% for error in form.name.errors %}
-                                    {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -35,14 +29,8 @@
                         <div class="col-md-12">
                             <div class="form-floating mb-3 mb-md-0">
                                 {{ form.subject(class="form-control", placeholder="Subject") }}
-                                {{ form.subject.label }}
-                                {% if form.subject.errors %}
-                                <div class="text-danger mt-1">
-                                    {% for error in form.subject.errors %}
-                                    {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
+                                <label>{{ get_translation('form.NotificationForm.subject', form.subject.label.text)
+                                    }}</label>
                             </div>
                         </div>
                     </div>
@@ -51,36 +39,18 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="form-floating mb-3 mb-md-0">
-                                {{ form.send_via(class="form-control", disabled = True) }}
-                                <!-- <input type="text" class="form-control" value="{{ dict(form.send_via.choices).get(form.send_via.data) }}" readonly> -->
-                                {{ form.send_via.label }}
+                                {{ form.send_via(class="form-control", disabled=True) }}
+                                {{form.send_via.label}}
                                 <input type="hidden" name="send_via" value="{{ form.send_via.data }}">
-                                {% if form.send_via.errors %}
-                                <div class="text-danger mt-1">
-                                    {% for error in form.send_via.errors %}
-                                    {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
                             </div>
                         </div>
 
                         <!-- Content Type -->
                         <div class="col-md-6">
                             <div class="form-floating mb-3 mb-md-0">
-                                {{ form.content_type(class="form-control",disabled=True)  }}
-                                <!-- <input type="text" class="form-control" value="{{ dict(form.content_type.choices).get(form.content_type.data) }}" readonly> -->
-
-                                {{ form.content_type.label }}
+                                {{ form.content_type(class="form-control", disabled=True) }}
+                                {{form.content_type.label}}
                                 <input type="hidden" name="content_type" value="{{ form.content_type.data }}">
-
-                                {% if form.content_type.errors %}
-                                <div class="text-danger mt-1">
-                                    {% for error in form.content_type.errors %}
-                                    {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -89,50 +59,35 @@
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <div class="form-floating mb-3 mb-md-0">
-                                {{ form.description(class="form-control", placeholder="Description"
-                                ,style="height: 80px;",disabled=True) }}
-                                {{ form.description.label }}
+                                <textarea class="form-control" style="height: 80px;"
+                                    disabled>{{ get_translation('notification.description', form.description.data) }}</textarea>
+                                {{form.description.label}}
                                 <input type="hidden" name="description" value="{{ form.description.data }}">
-
-                                {% if form.description.errors %}
-                                <div class="text-danger mt-1">
-                                    {% for error in form.description.errors %}
-                                    {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
-
 
                     <!-- Body -->
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <div class="form-floating mb-3 mb-md-0">
-                                {{ form.body(class="form-control", placeholder="Body",style="height: 200px;") }}
-                                {{ form.body.label }}
-                                {% if form.body.errors %}
-                                <div class="text-danger mt-1">
-                                    {% for error in form.body.errors %}
-                                    {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
+                                {{ form.body(class="form-control", placeholder="Body", style="height: 200px;") }}
+                                {{form.body.label}}
                             </div>
                         </div>
                     </div>
 
-                    <!-- دکمه‌ها -->
+                    <!-- Buttons -->
                     <div class="mt-4 mb-0">
                         <div class="row gx-2 gy-2">
                             <div class="col-md-6">
-                                <button type="submit" class="btn btn-primary w-100">Save</button>
+                                <button type="submit" class="btn btn-primary w-100">{{ get_translation('button.save',
+                                    'Save') }}</button>
                             </div>
                             <div class="col-md-6">
                                 <button type="button" class="btn btn-secondary w-100"
                                     onclick="location.href='{{ url_for('settings.notifications') }}'">
-                                    Back
+                                    {{ get_translation('button.back', 'Back') }}
                                 </button>
                             </div>
                         </div>

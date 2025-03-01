@@ -3,9 +3,6 @@ from ..extensions import db,get_logger,RedisClient,ModelUtils
 from .mixins import TimestampMixin, UserTrackingMixin
 from sqlalchemy.dialects.mysql import BINARY
 
-
-
-
 def generate_uuid():
     """
     تولید یک مقدار باینری 16 بایتی (UUID نسخه 4).

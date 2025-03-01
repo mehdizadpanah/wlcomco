@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card shadow-lg border-0 rounded-lg mt-5">
+            <div class="card-header">
+                <h4 class="text-center font-weight-light my-3">
+                    {% if language %} {{ gettext ('Edit Language') }} {% else %} {{gettext('Add Language')}} {% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST"
+                    action="{{ url_for('translate.language', language_id=language.id if language else None) }}"
+                    novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="form-floating mb-3">
+                        {{ form.code(class="form-control", placeholder="Language Code", readonly=language is not none)
+                        }}
+                        {{form.code.label}}
+                        {% if form.code.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.code.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        {{ form.name(class="form-control", placeholder="Language Name") }}
+                        {{form.name.label}}
+                        {% if form.name.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.name.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                        <div class="row gx-2 gy-2">
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    {{ form.is_active(class="form-check-input") }}
+                                    {{form.is_active.label}}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.rtl(class="form-check-input") }}
+                                {{form.rtl.label}}
+
+                            </div>
+                        </div>
+
+
+                    <div class="mt-4 mb-0">
+                        <div class="row gx-2 gy-2">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    {% if language %} {{gettext ('Update')}} {% else %} {{ gettext('Save')}} {% endif %}
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{{ url_for('translate.list_languages') }}" class="btn btn-secondary w-100">
+                                    {{gettext('Cancel')}}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
